@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"redoocehub/domains/user/entities"
+	"redoocehub/domains/organization/entities"
 )
 
 type Organization struct {
