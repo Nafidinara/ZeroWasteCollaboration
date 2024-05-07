@@ -40,8 +40,11 @@ func (u *userUsecase) GetProfileByID(c context.Context, userID string) (*entitie
 
 	return &entities.User{
 		ID:           user.ID,
-		Name:         user.Name,
+		Username:     user.Username,
+		ProfileImage: user.ProfileImage,
 		Email:        user.Email,
+		FullName:     user.FullName,
+		Gender:       user.Gender,
 		UpdatedAt:    user.UpdatedAt,
 		CreatedAt:    user.CreatedAt,
 		DeletedAt:    user.DeletedAt,

@@ -55,8 +55,10 @@ func (uc *UserController) Register(c echo.Context) error {
 
 	user := &entities.User{
 		ID:       uuid.New(),
-		Name:     request.Name,
 		Email:    request.Email,
+		Username: request.Username,
+		FullName: request.FullName,
+		Gender:   request.Gender,
 		Password: request.Password,
 	}
 
@@ -91,8 +93,11 @@ func (uc *UserController) Register(c echo.Context) error {
 
 	response := dto.RegisterResponse{
 		ID:           user.ID,
-		Name:         user.Name,
 		Email:        user.Email,
+		Username:     user.Username,
+		FullName:     user.FullName,
+		Gender:       user.Gender,
+		ProfileImage: user.ProfileImage,
 		CreatedAt:    user.CreatedAt,
 		UpdatedAt:    user.UpdatedAt,
 		AccessToken:  accessToken,

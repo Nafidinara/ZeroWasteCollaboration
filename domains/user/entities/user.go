@@ -8,17 +8,26 @@ import (
 	"gorm.io/gorm"
 )
 
+type Gender string
+
+const (
+	Male   Gender = "male"
+	Female Gender = "female"
+)
+
 type User struct {
 	ID           uuid.UUID
+	Username     string
+	ProfileImage string
 	Email        string
-	Name         string
+	FullName     string
+	Gender       Gender
 	Password     string
+	RefreshToken string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt
 }
-
-
 
 type UserRepository interface {
 	Create(user *User) error

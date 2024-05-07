@@ -13,8 +13,11 @@ import (
 func CreateAccessToken(user *entities.User, secret string, expiry int) (accessToken string, err error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
 	claims := &infra.JwtCustomClaims{
-		Name: user.Name,
-		ID:   user.ID,
+		FullName: user.FullName,
+		Email:    user.Email,
+		Username: user.Username,
+		Gender:   user.Gender,
+		ID:       user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: exp,
 		},
