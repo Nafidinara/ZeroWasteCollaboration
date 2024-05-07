@@ -6,14 +6,18 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 
-	"redoocehub/domains"
+	"redoocehub/domains/infra"
+	"redoocehub/domains/user/entities"
 )
 
-func CreateAccessToken(user *domains.User, secret string, expiry int) (accessToken string, err error) {
+func CreateAccessToken(user *entities.User, secret string, expiry int) (accessToken string, err error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
-	claims := &domains.JwtCustomClaims{
-		Name: user.Name,
-		ID:   user.ID,
+	claims := &infra.JwtCustomClaims{
+		FullName: user.FullName,
+		Email:    user.Email,
+		Username: user.Username,
+		Gender:   user.Gender,
+		ID:       user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: exp,
 		},
@@ -26,8 +30,8 @@ func CreateAccessToken(user *domains.User, secret string, expiry int) (accessTok
 	return t, err
 }
 
-func CreateRefreshToken(user *domains.User, secret string, expiry int) (refreshToken string, err error) {
-	claimsRefresh := &domains.JwtCustomRefreshClaims{
+func CreateRefreshToken(user *entities.User, secret string, expiry int) (refreshToken string, err error) {
+	claimsRefresh := &infra.JwtCustomRefreshClaims{
 		ID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(expiry)).Unix(),

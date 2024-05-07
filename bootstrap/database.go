@@ -7,7 +7,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"redoocehub/domains"
+	driver "redoocehub/drivers/mysql"
 )
 
 func NewMysqlDatabase(env *Env) *gorm.DB {
@@ -31,5 +31,5 @@ func NewMysqlDatabase(env *Env) *gorm.DB {
 }
 
 func MigrateDatabase(db *gorm.DB) {
-	db.AutoMigrate(&domains.User{})
+	db.AutoMigrate(&driver.User{})
 }
