@@ -3,7 +3,7 @@ package repositories
 import (
 	"gorm.io/gorm"
 
-	"redoocehub/domains/user/entities"
+	"redoocehub/domains/entities"
 )
 
 type userRepository struct {

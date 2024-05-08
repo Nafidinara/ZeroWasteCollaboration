@@ -16,17 +16,18 @@ const (
 )
 
 type User struct {
-	ID           uuid.UUID
-	Username     string
-	ProfileImage string
-	Email        string
-	FullName     string
-	Gender       Gender
-	Password     string
-	RefreshToken string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    gorm.DeletedAt
+	ID            uuid.UUID
+	Username      string
+	ProfileImage  string
+	Email         string
+	FullName      string
+	Gender        Gender
+	Password      string
+	RefreshToken  string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     gorm.DeletedAt
+	Organizations []Organization `gorm:"foreignKey:user_id"`
 }
 
 type UserRepository interface {

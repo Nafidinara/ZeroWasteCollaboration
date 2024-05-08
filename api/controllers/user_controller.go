@@ -8,9 +8,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"redoocehub/bootstrap"
+	"redoocehub/domains/dto"
+	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
-	"redoocehub/domains/user/dto"
-	"redoocehub/domains/user/entities"
 )
 
 type UserController struct {

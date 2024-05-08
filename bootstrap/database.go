@@ -31,5 +31,5 @@ func NewMysqlDatabase(env *Env) *gorm.DB {
 }
 
 func MigrateDatabase(db *gorm.DB) {
-	db.AutoMigrate(&driver.User{})
+	db.AutoMigrate(&driver.User{}, &driver.Organization{})
 }

@@ -3,7 +3,9 @@ package usecases
 import (
 	"time"
 
-	"redoocehub/domains/organization/entities"
+	"github.com/google/uuid"
+
+	"redoocehub/domains/entities"
 )
 
 type organizationUsecase struct {
@@ -22,7 +24,7 @@ func (o *organizationUsecase) GetAll() ([]entities.Organization, error) {
 	return o.organizationRepository.GetAll()
 }
 
-func (o *organizationUsecase) GetByID(id string) (entities.Organization, error) {
+func (o *organizationUsecase) GetByID(id uuid.UUID) (entities.Organization, error) {
 	return o.organizationRepository.GetByID(id)
 }
 
@@ -31,9 +33,19 @@ func (o *organizationUsecase) Create(organization *entities.Organization) error 
 }
 
 func (o *organizationUsecase) Update(organization *entities.Organization) error {
+
 	return o.organizationRepository.Update(organization)
 }
 
-func (o *organizationUsecase) Delete(organization *entities.Organization) error {
-	return o.organizationRepository.Delete(organization)
+func (o *organizationUsecase) Delete(id uuid.UUID) error {
+	org, err := o.organizationRepository.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	return o.organizationRepository.Delete(&org)
+}
+
+func (o *organizationUsecase) GetUser(userId uuid.UUID) (entities.User, error) {
+	return o.organizationRepository.GetUser(userId)
 }

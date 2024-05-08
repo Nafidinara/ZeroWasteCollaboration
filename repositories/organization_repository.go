@@ -1,9 +1,12 @@
 package repositories
 
 import (
+	"time"
+
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"redoocehub/domains/organization/entities"
+	"redoocehub/domains/entities"
 )
 
 type organizationRepository struct {
@@ -18,7 +21,7 @@ func (o *organizationRepository) Create(organization *entities.Organization) err
 	return o.DB.Create(organization).Error
 }
 
-func (o *organizationRepository) GetByID(id string) (entities.Organization, error) {
+func (o *organizationRepository) GetByID(id uuid.UUID) (entities.Organization, error) {
 	var organization entities.Organization
 	err := o.DB.Where("id = ?", id).First(&organization).Error
 	return organization, err
@@ -31,9 +34,17 @@ func (o *organizationRepository) GetAll() ([]entities.Organization, error) {
 }
 
 func (o *organizationRepository) Update(organization *entities.Organization) error {
+	organization.UpdatedAt = time.Now()
+
 	return o.DB.Save(organization).Error
 }
 
 func (o *organizationRepository) Delete(organization *entities.Organization) error {
 	return o.DB.Delete(organization).Error
+}
+
+func (o *organizationRepository) GetUser(userId uuid.UUID) (entities.User, error) {
+	var user entities.User
+	err := o.DB.Where("id = ?", userId).First(&user).Error
+	return user, err
 }
