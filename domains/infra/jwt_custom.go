@@ -4,7 +4,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 
-	"redoocehub/domains/user/entities"
+	"redoocehub/domains/entities"
 )
 
 type JwtCustomClaims struct {

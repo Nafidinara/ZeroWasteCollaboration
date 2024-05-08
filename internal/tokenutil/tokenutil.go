@@ -6,8 +6,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 
+	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
-	"redoocehub/domains/user/entities"
 )
 
 func CreateAccessToken(user *entities.User, secret string, expiry int) (accessToken string, err error) {

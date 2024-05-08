@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"redoocehub/domains/user/entities"
+	"redoocehub/domains/entities"
 	"redoocehub/internal/tokenutil"
 )
 

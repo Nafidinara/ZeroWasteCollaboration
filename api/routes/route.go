@@ -11,5 +11,7 @@ import (
 
 func SetupRoutes(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *echo.Echo) {
 	prefixRouter := e.Group("api/v1")
+	
 	NewUserRouter(env, timeout, db, prefixRouter)
+	NewOrganizationRouter(env, timeout, db, prefixRouter)
 }

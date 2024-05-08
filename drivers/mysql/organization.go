@@ -6,11 +6,13 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"redoocehub/domains/user/entities"
+	"redoocehub/domains/entities"
 )
 
 type Organization struct {
 	ID           uuid.UUID      `gorm:"primaryKey;not null" json:"id"`
+	User         User           `gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	UserId       uuid.UUID      `gorm:"type:varchar(191);index" json:"user_id"`
 	Name         string         `gorm:"type:varchar(255);not null" json:"name"`
 	Description  string         `gorm:"type:varchar(255);" json:"description"`
 	Type         entities.Type  `gorm:"type:enum('community','company','institution','ngo','agency');not null" json:"type"`
