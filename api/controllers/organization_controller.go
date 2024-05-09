@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -34,10 +33,12 @@ func (oc *OrganizationController) GetAll(c echo.Context) error {
 		})
 	}
 
+	response := entities.ToGetAllResponseOrganizations(organizations)
+
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
 		Message:    "Success retrieved all organizations",
-		Data:       organizations,
+		Data:       response,
 	})
 }
 
@@ -57,10 +58,12 @@ func (oc *OrganizationController) GetByID(c echo.Context) error {
 		})
 	}
 
+	response := entities.ToResponseOrganizationDetail(&organization, &organization.User)
+
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
 		Message:    "Success retrieved organization",
-		Data:       organization,
+		Data:       response,
 	})
 }
 
@@ -86,32 +89,11 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 		})
 	}
 
-	fundingDate, err := time.Parse("2006-01-02", request.FoundingDate)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
 	userId := c.Get("x-user-id").(string)
 
-	organization := entities.Organization{
-		ID:           uuid.New(),
-		UserID:       uuid.MustParse(userId),
-		Name:         request.Name,
-		Description:  request.Description,
-		Type:         request.Type,
-		Email:        request.Email,
-		ProfileImage: request.ProfileImage,
-		FoundingDate: fundingDate,
-		Website:      request.Website,
-		Phone:        request.Phone,
-	}
+	request.UserID = uuid.MustParse(userId)
 
-	err = oc.OrganizationUsecase.Create(&organization)
+	organization, err := oc.OrganizationUsecase.Create(&request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
@@ -131,29 +113,7 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 		})
 	}
 
-	user := entities.User{
-		ID:       userData.ID,
-		Email:    userData.Email,
-		Username: userData.Username,
-		FullName: userData.FullName,
-		Gender:   userData.Gender,
-	}
-
-	response := dto.OrganizationResponse{
-		ID:           organization.ID,
-		Name:         organization.Name,
-		Description:  organization.Description,
-		Type:         organization.Type,
-		Email:        organization.Email,
-		ProfileImage: organization.ProfileImage,
-		FoundingDate: fundingDate,
-		Website:      organization.Website,
-		Phone:        organization.Phone,
-		CreatedAt:    organization.CreatedAt,
-		UpdatedAt:    organization.UpdatedAt,
-		DeletedAt:    organization.DeletedAt,
-		User:         user,
-	}
+	response := entities.ToResponseOrganizationDetail(organization, &userData)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
@@ -222,15 +182,7 @@ func (oc *OrganizationController) Update(c echo.Context) error {
 		})
 	}
 
-	response := dto.OrganizationResponse{
-		ID:          orgExist.ID,
-		Name:        orgExist.Name,
-		Description: orgExist.Description,
-		Type:        orgExist.Type,
-		Email:       orgExist.Email,
-		Website:     orgExist.Website,
-		Phone:       orgExist.Phone,
-	}
+	response := entities.ToResponseOrganization(&orgExist)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",

@@ -1,0 +1,12 @@
+# .air.toml
+
+[build]
+cmd = "go run cmd/main.go"
+root = "cmd"  # Assuming your main package is located in the cmd directory
+watch = ["."]
+
+[[watcher]]
+paths = ["./cmd"]
+
+[[watcher.restart]]
+name = "go.mod"
