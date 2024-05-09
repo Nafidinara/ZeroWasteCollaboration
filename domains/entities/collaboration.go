@@ -26,8 +26,7 @@ type Collaboration struct {
 
 type CollaborationRepository interface {
 	GetByID(id uuid.UUID) (Collaboration, error)
-	CreateCollaboration(collaboration *Collaboration) (*Collaboration, error)
-	CreateProposal(proposal *Proposal) (*Proposal, error)
+	Create(collaboration *Collaboration) (*Collaboration, error)
 	Update(collaboration *Collaboration) error
 	Delete(collaboration *Collaboration) error
 }

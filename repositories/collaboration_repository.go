@@ -25,14 +25,7 @@ func (o *CollaborationRepository) GetByID(id uuid.UUID) (entities.Collaboration,
 	return collaboration, err
 }
 
-func (o *CollaborationRepository) CreateProposal(proposal *entities.Proposal) (*entities.Proposal, error) {
-	if err := o.DB.Create(proposal).Error; err != nil {
-		return nil, err
-	}
-	return proposal, nil
-}
-
-func (o *CollaborationRepository) CreateCollaboration(collaboration *entities.Collaboration) (*entities.Collaboration, error) {
+func (o *CollaborationRepository) Create(collaboration *entities.Collaboration) (*entities.Collaboration, error) {
 	if err := o.DB.Create(collaboration).Error; err != nil {
 		return nil, err
 	}

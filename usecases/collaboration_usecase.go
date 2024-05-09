@@ -34,7 +34,7 @@ func (c *CollaborationUsecase) Create(request *dto.CollaborationRequest) (*entit
 		Status:         request.Status,
 	}
 
-	newCollaboration, err := c.collaborationRepository.CreateCollaboration(collaboration)
+	newCollaboration, err := c.collaborationRepository.Create(collaboration)
 
 	if err != nil {
 		return nil, err
