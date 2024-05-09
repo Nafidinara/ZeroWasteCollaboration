@@ -15,4 +15,5 @@ func SetupRoutes(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *echo
 	NewUserRouter(env, timeout, db, prefixRouter)
 	NewOrganizationRouter(env, timeout, db, prefixRouter)
 	NewAddressRouter(env, timeout, db, prefixRouter)
+	NewCollaborationRouter(env, timeout, db, prefixRouter)
 }

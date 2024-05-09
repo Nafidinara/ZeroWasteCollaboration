@@ -17,7 +17,7 @@ func NewCollaborationRepository(db *gorm.DB) entities.CollaborationRepository {
 
 func (o *CollaborationRepository) GetByID(id uuid.UUID) (entities.Collaboration, error) {
 	var collaboration entities.Collaboration
-	err := o.DB.Where("collaborations.id = ?", id).
+	err := o.DB.Where("id = ?", id).
 		Preload("User").
 		Preload("Organization").
 		Preload("Proposal").

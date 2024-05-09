@@ -13,42 +13,23 @@ import (
 	"redoocehub/internal/validation"
 )
 
-type OrganizationController struct {
-	OrganizationUsecase entities.OrganizationUsecase
-	Env                 *bootstrap.Env
+type CollaborationController struct {
+	CollaborationUsecase entities.CollaborationUsecase
+	ProposalUsecase      entities.ProposalUsecase
+	Env                  *bootstrap.Env
 }
 
-func NewOrganizationController(organizationUsecase entities.OrganizationUsecase) *OrganizationController {
-	return &OrganizationController{OrganizationUsecase: organizationUsecase}
+func NewCollaborationController(collaborationUsecase entities.CollaborationUsecase, proposalUsecase entities.ProposalUsecase, env *bootstrap.Env) *CollaborationController {
+	return &CollaborationController{CollaborationUsecase: collaborationUsecase, ProposalUsecase: proposalUsecase, Env: env}
 }
 
-func (oc *OrganizationController) GetAll(c echo.Context) error {
-	organizations, err := oc.OrganizationUsecase.GetAll()
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	response := entities.ToGetAllResponseOrganizations(organizations)
-
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success retrieved all organizations",
-		Data:       response,
-	})
-}
-
-func (oc *OrganizationController) GetByID(c echo.Context) error {
-
+// get by id
+func (cc *CollaborationController) GetByID(c echo.Context) error {
 	idParam := c.Param("id")
 
 	id := uuid.MustParse(idParam)
 
-	organization, err := oc.OrganizationUsecase.GetByID(id)
+	collaboration, err := cc.CollaborationUsecase.GetByID(id)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
@@ -58,18 +39,19 @@ func (oc *OrganizationController) GetByID(c echo.Context) error {
 		})
 	}
 
-	response := entities.ToResponseOrganizationDetail(&organization, &organization.User)
+	response := entities.ToResponseCollaboration(&collaboration)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
-		Message:    "Success retrieved organization",
+		Message:    "Success retrieved collaboration",
 		Data:       response,
 	})
 }
 
-func (oc *OrganizationController) Create(c echo.Context) error {
+// create
+func (cc *CollaborationController) Create(c echo.Context) error {
 
-	var request dto.OrganizationRequest
+	var request dto.CollaborationRequest
 
 	err := c.Bind(&request)
 
@@ -89,21 +71,29 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 		})
 	}
 
+	proposalReq := dto.ProposalRequest{
+		Subject:    request.Subject,
+		Content:    request.Content,
+		Attachment: request.Attachment,
+	}
+
+	proposal, err := cc.ProposalUsecase.Create(&proposalReq)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	request.ProposalId = proposal.ID
+
 	userId := c.Get("x-user-id").(string)
 
-	request.UserID = uuid.MustParse(userId)
+	request.UserId = uuid.MustParse(userId)
 
-	organization, err := oc.OrganizationUsecase.Create(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	userData, err := oc.OrganizationUsecase.GetUser(organization.UserID)
+	collaboration, err := cc.CollaborationUsecase.Create(&request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
@@ -113,102 +103,11 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 		})
 	}
 
-	response := entities.ToResponseOrganizationDetail(organization, &userData)
+	response := entities.ToResponseCollaboration(collaboration)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
-		Message:    "Success created organization",
+		Message:    "Success created collaboration",
 		Data:       response,
-	})
-}
-
-func (oc *OrganizationController) Update(c echo.Context) error {
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	orgExist, err := oc.OrganizationUsecase.GetByID(id)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	if orgExist.ID == uuid.Nil {
-		return c.JSON(http.StatusNotFound, infra.ErrorResponse{
-			StatusCode: "Not Found",
-			Message:    "Organization not found",
-			Data:       nil,
-		})
-	}
-
-	var request dto.OrganizationRequest
-
-	err = c.Bind(&request)
-
-	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
-	}
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	orgExist.Name = request.Name
-	orgExist.Description = request.Description
-	orgExist.Type = request.Type
-	orgExist.Email = request.Email
-	orgExist.Website = request.Website
-	orgExist.Phone = request.Phone
-
-	err = oc.OrganizationUsecase.Update(&orgExist)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	response := entities.ToResponseOrganization(&orgExist)
-
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success updated organization",
-		Data:       response,
-	})
-}
-
-func (oc *OrganizationController) Delete(c echo.Context) error {
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	err := oc.OrganizationUsecase.Delete(id)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success deleted organization",
-		Data:       nil,
 	})
 }

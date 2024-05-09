@@ -37,3 +37,32 @@ type CollaborationUsecase interface {
 	Update(collaboration *Collaboration) error
 	Delete(id uuid.UUID) error
 }
+
+func ToResponseCollaboration(collaboration *Collaboration) *dto.Collaboration {
+	return &dto.Collaboration{
+		ID: collaboration.ID,
+		User: dto.User{
+			ID:       collaboration.UserId,
+			Username: collaboration.User.Username,
+			Email:    collaboration.User.Email,
+			FullName: collaboration.User.FullName,
+			Gender:   collaboration.User.Gender,
+			ProfileImage: collaboration.User.ProfileImage,
+		},
+		Organization: dto.Organization{
+			Name:    collaboration.Organization.Name,
+			Email:   collaboration.Organization.Email,
+			Website: collaboration.Organization.Website,
+			Phone:   collaboration.Organization.Phone,
+			Description: collaboration.Organization.Description,
+			Type:    collaboration.Organization.Type,
+			ProfileImage: collaboration.Organization.ProfileImage,
+		},
+		Proposal: dto.Proposal{
+			Subject:    collaboration.Proposal.Subject,
+			Content:    collaboration.Proposal.Content,
+			Attachment: collaboration.Proposal.Attachment,
+		},
+		Status: collaboration.Status,
+	}
+}

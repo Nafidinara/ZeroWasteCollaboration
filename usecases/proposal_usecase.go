@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 )
 
@@ -28,18 +29,19 @@ func (u *ProposalUsecase) GetByID(id uuid.UUID) (entities.Proposal, error) {
 	return u.proposalRepository.GetByID(id)
 }
 
-//create 
-func (u *ProposalUsecase) Create(proposal *entities.Proposal) (*entities.Proposal, error) {
-	return u.proposalRepository.Create(proposal)
+// create
+func (u *ProposalUsecase) Create(proposal *dto.ProposalRequest) (*entities.Proposal, error) {
+	newProposal := entities.DtoToEntity(proposal)
+	return u.proposalRepository.Create(newProposal)
 }
 
-//update
+// update
 func (u *ProposalUsecase) Update(proposal *entities.Proposal) error {
 	proposal.UpdatedAt = time.Now()
 	return u.proposalRepository.Update(proposal)
 }
 
-//delete
+// delete
 func (u *ProposalUsecase) Delete(id uuid.UUID) error {
 	return u.proposalRepository.Delete(&entities.Proposal{ID: id})
 }
