@@ -4,6 +4,9 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
+
+	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 	"redoocehub/internal/tokenutil"
 )
@@ -20,8 +23,24 @@ func NewUserUsecase(userRepository entities.UserRepository, timeout time.Duratio
 	}
 }
 
-func (u *userUsecase) Create(c context.Context, user *entities.User) error {
-	return u.userRepository.Create(user)
+func (u *userUsecase) Create(c context.Context, request *dto.RegisterRequest) (*entities.User, error) {
+
+	user := &entities.User{
+		ID:       uuid.New(),
+		Email:    request.Email,
+		Username: request.Username,
+		FullName: request.FullName,
+		Gender:   request.Gender,
+		Password: request.Password,
+	}
+
+	newUser, err := u.userRepository.Create(user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return newUser, nil
 }
 
 func (u *userUsecase) GetUserByEmail(c context.Context, email string) (entities.User, error) {
@@ -48,6 +67,7 @@ func (u *userUsecase) GetProfileByID(c context.Context, userID string) (*entitie
 		UpdatedAt:    user.UpdatedAt,
 		CreatedAt:    user.CreatedAt,
 		DeletedAt:    user.DeletedAt,
+		Organizations: user.Organizations,
 	}, nil
 }
 

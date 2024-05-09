@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 
@@ -19,6 +18,7 @@ type UserController struct {
 }
 
 func (uc *UserController) Register(c echo.Context) error {
+
 	var request dto.RegisterRequest
 
 	err := c.Bind(&request)
@@ -53,16 +53,7 @@ func (uc *UserController) Register(c echo.Context) error {
 
 	request.Password = string(encryptedPassword)
 
-	user := &entities.User{
-		ID:       uuid.New(),
-		Email:    request.Email,
-		Username: request.Username,
-		FullName: request.FullName,
-		Gender:   request.Gender,
-		Password: request.Password,
-	}
-
-	err = uc.UserUsecase.Create(c.Request().Context(), user)
+	user, err := uc.UserUsecase.Create(c.Request().Context(), &request)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
@@ -91,18 +82,9 @@ func (uc *UserController) Register(c echo.Context) error {
 		})
 	}
 
-	response := dto.RegisterResponse{
-		ID:           user.ID,
-		Email:        user.Email,
-		Username:     user.Username,
-		FullName:     user.FullName,
-		Gender:       user.Gender,
-		ProfileImage: user.ProfileImage,
-		CreatedAt:    user.CreatedAt,
-		UpdatedAt:    user.UpdatedAt,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
+	user.RefreshToken = refreshToken
+
+	response := entities.ToRegisterResponseUser(user, accessToken)
 
 	return c.JSON(http.StatusCreated, infra.SuccessResponse{
 		StatusCode: "Created",
@@ -124,6 +106,7 @@ func (uc *UserController) Login(c echo.Context) error {
 	}
 
 	user, err := uc.UserUsecase.GetUserByEmail(c.Request().Context(), request.Email)
+	
 	if err != nil {
 		return c.JSON(http.StatusNotFound, infra.ErrorResponse{
 			StatusCode: "Not Found",
@@ -150,6 +133,7 @@ func (uc *UserController) Login(c echo.Context) error {
 	}
 
 	refreshToken, err := uc.UserUsecase.CreateRefreshToken(&user, uc.Env.REFRESH_TOKEN_SECRET, uc.Env.REFRESH_TOKEN_EXPIRY_HOUR)
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
 			StatusCode: "Internal Server Error",
@@ -158,10 +142,9 @@ func (uc *UserController) Login(c echo.Context) error {
 		})
 	}
 
-	loginResponse := dto.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
+	loginUser := entities.EntityToDtoUser(&user)
+
+	loginResponse := entities.ToLoginResponseUser(loginUser, accessToken, refreshToken)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
@@ -183,10 +166,12 @@ func (uc *UserController) Profile(c echo.Context) error {
 		})
 	}
 
+	response := entities.ToProfileResponseUser(profile)
+
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
 		Message:    "Profile retrieved successfully",
-		Data:       profile,
+		Data:       response,
 	})
 }
 
@@ -233,10 +218,7 @@ func (uc *UserController) RefreshToken(c echo.Context) error {
 		})
 	}
 
-	response := dto.RefreshTokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
+	response := entities.ToRefreshTokenResponseUser(accessToken, refreshToken)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",

@@ -17,19 +17,24 @@ func NewOrganizationRepository(db *gorm.DB) entities.OrganizationRepository {
 	return &organizationRepository{DB: db}
 }
 
-func (o *organizationRepository) Create(organization *entities.Organization) error {
-	return o.DB.Create(organization).Error
+func (o *organizationRepository) Create(organization *entities.Organization) (*entities.Organization, error) {
+	if err := o.DB.Create(organization).Error; err != nil {
+		return nil, err
+	}
+	return organization, nil
 }
 
 func (o *organizationRepository) GetByID(id uuid.UUID) (entities.Organization, error) {
 	var organization entities.Organization
-	err := o.DB.Where("id = ?", id).First(&organization).Error
+	err := o.DB.Where("organizations.id = ?", id).Preload("User").
+		Joins("INNER JOIN addresses ON organizations.id = addresses.organization_id").
+		First(&organization).Error
 	return organization, err
 }
 
 func (o *organizationRepository) GetAll() ([]entities.Organization, error) {
 	var organizations []entities.Organization
-	err := o.DB.Find(&organizations).Error
+	err := o.DB.Preload("User").Find(&organizations).Error
 	return organizations, err
 }
 
