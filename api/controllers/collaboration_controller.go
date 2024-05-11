@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -11,16 +12,23 @@ import (
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
 	"redoocehub/internal/validation"
+	"redoocehub/usecases"
 )
 
 type CollaborationController struct {
 	CollaborationUsecase entities.CollaborationUsecase
 	ProposalUsecase      entities.ProposalUsecase
+	CloudinaryUsecase    entities.CloudinaryUsecase
 	Env                  *bootstrap.Env
 }
 
-func NewCollaborationController(collaborationUsecase entities.CollaborationUsecase, proposalUsecase entities.ProposalUsecase, env *bootstrap.Env) *CollaborationController {
-	return &CollaborationController{CollaborationUsecase: collaborationUsecase, ProposalUsecase: proposalUsecase, Env: env}
+func NewCollaborationController(collaborationUsecase entities.CollaborationUsecase, proposalUsecase entities.ProposalUsecase, cloudinaryUsecase entities.CloudinaryUsecase, env *bootstrap.Env) *CollaborationController {
+	return &CollaborationController{
+		CollaborationUsecase: collaborationUsecase,
+		ProposalUsecase:      proposalUsecase,
+		CloudinaryUsecase:    cloudinaryUsecase,
+		Env:                  env,
+	}
 }
 
 // get by id
@@ -53,7 +61,29 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	var request dto.CollaborationRequest
 
+	formHeader, errFile := c.FormFile("attachment")
+
+	if errFile != nil {
+		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
+			StatusCode: "Bad Request",
+			Message:    errFile.Error(),
+			Data:       nil,
+		})
+	}
+
+	formFile, errFile := formHeader.Open()
+
+	if errFile != nil {
+		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
+			StatusCode: "Bad Request",
+			Message:    errFile.Error(),
+			Data:       nil,
+		})
+	}
+
 	err := c.Bind(&request)
+
+	request.Attachment = formFile
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
@@ -71,10 +101,27 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 		})
 	}
 
+	uploadUrl, err := usecases.NewMediaUpload().FileUpload(dto.File{File: formFile}, entities.CloudinaryEnvSetting{
+		CloudName: cc.Env.CLOUDINARY_CLOUD_NAME,
+		ApiKey:    cc.Env.CLOUDINARY_API_KEY,
+		ApiSecret: cc.Env.CLOUDINARY_API_SECRET,
+		UploadFolder: cc.Env.CLOUDINARY_UPLOAD_FOLDER,
+	})
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	fmt.Println("uploadUrl: ", uploadUrl)
+
 	proposalReq := dto.ProposalRequest{
 		Subject:    request.Subject,
 		Content:    request.Content,
-		Attachment: request.Attachment,
+		Attachment: uploadUrl,
 	}
 
 	proposal, err := cc.ProposalUsecase.Create(&proposalReq)
