@@ -44,7 +44,7 @@ func (o *organizationUsecase) Create(request *dto.OrganizationRequest) (*entitie
 		Description:  request.Description,
 		Type:         request.Type,
 		Email:        request.Email,
-		ProfileImage: request.ProfileImage,
+		ProfileImage: request.ProfileImage.(string),
 		FoundingDate: foundingDate,
 		Website:      request.Website,
 		Phone:        request.Phone,

@@ -22,15 +22,15 @@ type Organization struct {
 }
 
 type OrganizationRequest struct {
-	Name         string                 `json:"name" binding:"required" validate:"required"`
-	UserID       uuid.UUID              `json:"user_id" binding:"required"`
-	Description  string                 `json:"description" binding:"required" validate:"required"`
-	Type         types.OrganizationType `json:"type" binding:"required" validate:"required"`
-	ProfileImage string                 `json:"profile_image" binding:"required" validate:"required"`
-	FoundingDate string                 `json:"founding_date" binding:"required" validate:"required,customDateFormat"`
-	Email        string                 `json:"email" binding:"required" validate:"required,email"`
-	Website      string                 `json:"website" binding:"required" validate:"required,url"`
-	Phone        string                 `json:"phone" binding:"required" validate:"required,max=15"`
+	Name         string                 `json:"name" form:"name" binding:"required" validate:"required"`
+	UserID       uuid.UUID              `json:"user_id" form:"user_id" binding:"required"`
+	Description  string                 `json:"description" form:"description" binding:"required" validate:"required"`
+	Type         types.OrganizationType `json:"type" form:"type" binding:"required" validate:"required,oneof=community company institution ngo agency"`
+	ProfileImage interface{}                 `json:"profile_image" form:"profile_image" binding:"required" validate:"required"`
+	FoundingDate string                 `json:"founding_date" form:"founding_date" binding:"required" validate:"required,customDateFormat"`
+	Email        string                 `json:"email" form:"email" binding:"required" validate:"required,email"`
+	Website      string                 `json:"website" form:"website" binding:"required" validate:"required,url"`
+	Phone        string                 `json:"phone" form:"phone" binding:"required" validate:"required,max=15"`
 }
 
 type OrganizationResponse struct {

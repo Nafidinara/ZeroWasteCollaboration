@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
 	"redoocehub/internal/validation"
+	"redoocehub/usecases"
 )
 
 type OrganizationController struct {
@@ -71,6 +73,26 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 
 	var request dto.OrganizationRequest
 
+	formHeader, errFile := c.FormFile("profile_image")
+
+	if errFile != nil {
+		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
+			StatusCode: "Bad Request",
+			Message:    errFile.Error(),
+			Data:       nil,
+		})
+	}
+
+	formFile, errFile := formHeader.Open()
+
+	if errFile != nil {
+		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
+			StatusCode: "Bad Request",
+			Message:    errFile.Error(),
+			Data:       nil,
+		})
+	}
+
 	err := c.Bind(&request)
 
 	if err != nil {
@@ -80,6 +102,8 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 			Data:       nil,
 		})
 	}
+
+	request.ProfileImage = formFile
 
 	if err := validation.ValidateRequest(request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
@@ -92,6 +116,25 @@ func (oc *OrganizationController) Create(c echo.Context) error {
 	userId := c.Get("x-user-id").(string)
 
 	request.UserID = uuid.MustParse(userId)
+
+	uploadUrl, err := usecases.NewMediaUpload().FileUpload(dto.File{File: formFile}, entities.CloudinaryEnvSetting{
+		CloudName: oc.Env.CLOUDINARY_CLOUD_NAME,
+		ApiKey:    oc.Env.CLOUDINARY_API_KEY,
+		ApiSecret: oc.Env.CLOUDINARY_API_SECRET,
+		UploadFolder: oc.Env.CLOUDINARY_UPLOAD_FOLDER,
+	})
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	fmt.Println("uploadUrl: ", uploadUrl)
+
+	request.ProfileImage = uploadUrl
 
 	organization, err := oc.OrganizationUsecase.Create(&request)
 

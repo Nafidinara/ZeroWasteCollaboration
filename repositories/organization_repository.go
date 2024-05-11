@@ -40,7 +40,6 @@ func (o *organizationRepository) GetAll() ([]entities.Organization, error) {
 
 func (o *organizationRepository) Update(organization *entities.Organization) error {
 	organization.UpdatedAt = time.Now()
-
 	return o.DB.Save(organization).Error
 }
 

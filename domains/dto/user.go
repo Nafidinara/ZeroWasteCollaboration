@@ -19,8 +19,8 @@ type User struct {
 }
 
 type LoginRequest struct {
-	Email    string `form:"email" binding:"required,email"`
-	Password string `form:"password" binding:"required"`
+	Email    string `form:"email" binding:"required,email" validate:"required,email"`
+	Password string `form:"password" binding:"required" validate:"required"`
 }
 
 type LoginResponse struct {
@@ -30,11 +30,21 @@ type LoginResponse struct {
 }
 
 type RegisterRequest struct {
-	FullName string       `form:"fullname" binding:"required"`
-	Gender   types.Gender `form:"gender" binding:"required"`
-	Username string       `form:"username" binding:"required"`
-	Email    string       `form:"email" binding:"required,email"`
-	Password string       `form:"password" binding:"required"`
+	FullName     string       `form:"fullname" binding:"required" validate:"required"`
+	Gender       types.Gender `form:"gender" binding:"required" validate:"required,oneof=male female"`
+	Username     string       `form:"username" binding:"required" validate:"required"`
+	Email        string       `form:"email" binding:"required,email" validate:"required,email"`
+	Password     string       `form:"password" binding:"required" validate:"required"`
+	ProfileImage string       `form:"profile_image" binding:"required"`
+}
+
+type UpdateUserRequest struct {
+	FullName     string       `form:"fullname" binding:"required" validate:"required"`
+	Gender       types.Gender `form:"gender" binding:"required" validate:"required,oneof=male female"`
+	Username     string       `form:"username" binding:"required" validate:"required"`
+	Email        string       `form:"email" binding:"required,email" validate:"required,email"`
+	Password     string       `form:"password" binding:"required"`
+	ProfileImage string       `form:"profile_image" binding:"required"`
 }
 
 type RegisterResponse struct {
@@ -51,12 +61,12 @@ type RegisterResponse struct {
 }
 
 type ProfileResponse struct {
-	ID           uuid.UUID `json:"id"`
-	Username     string    `json:"username"`
-	ProfileImage string    `json:"profile_image"`
-	Email        string    `json:"email"`
-	FullName     string    `json:"fullname"`
-	Gender       types.Gender
+	ID            uuid.UUID `json:"id"`
+	Username      string    `json:"username"`
+	ProfileImage  string    `json:"profile_image"`
+	Email         string    `json:"email"`
+	FullName      string    `json:"fullname"`
+	Gender        types.Gender
 	Organizations []Organization `json:"organizations"`
 	Addresses     []Address      `json:"addresses"`
 }

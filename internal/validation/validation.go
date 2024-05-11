@@ -17,17 +17,19 @@ func errorMessage(fieldError validator.FieldError) string {
 	case "startswith":
 		return fmt.Sprintf("Field %s must start with %s", fieldError.Field(), fieldError.Param())
 	case "min":
-		return fmt.Sprintf("Field %s must greater than  %s", fieldError.Field(), fieldError.Param())
+		return fmt.Sprintf("Field %s must greater than %s", fieldError.Field(), fieldError.Param())
 	case "max":
-		return fmt.Sprintf("Field %s must less than  %s", fieldError.Field(), fieldError.Param())
+		return fmt.Sprintf("Field %s must less than %s", fieldError.Field(), fieldError.Param())
 	case "len":
-		return fmt.Sprintf("Field %s must be  %s characters", fieldError.Field(), fieldError.Param())
+		return fmt.Sprintf("Field %s must be %s characters", fieldError.Field(), fieldError.Param())
 	case "email":
-		return fmt.Sprintf("Field %s must be  a valid email", fieldError.Field())
+		return fmt.Sprintf("Field %s must be a valid email", fieldError.Field())
 	case "maxFileSize":
-		return fmt.Sprintf("Field %s must be  an image", fieldError.Field())
+		return fmt.Sprintf("Field %s must be an image", fieldError.Field())
 	case "customDateFormat":
-		return fmt.Sprintf("Field %s must be  a valid date format, it should be YYYY-MM-DD", fieldError.Field())
+		return fmt.Sprintf("Field %s must be a valid date format, it should be YYYY-MM-DD", fieldError.Field())
+	case "oneof":
+		return fmt.Sprintf("Field %s must be one of the following: %s", fieldError.Field(), fieldError.Param())
 	}
 
 	return fieldError.Error()

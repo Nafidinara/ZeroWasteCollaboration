@@ -26,12 +26,13 @@ func NewUserUsecase(userRepository entities.UserRepository, timeout time.Duratio
 func (u *userUsecase) Create(c context.Context, request *dto.RegisterRequest) (*entities.User, error) {
 
 	user := &entities.User{
-		ID:       uuid.New(),
-		Email:    request.Email,
-		Username: request.Username,
-		FullName: request.FullName,
-		Gender:   request.Gender,
-		Password: request.Password,
+		ID:           uuid.New(),
+		Email:        request.Email,
+		Username:     request.Username,
+		FullName:     request.FullName,
+		Gender:       request.Gender,
+		Password:     request.Password,
+		ProfileImage: request.ProfileImage,
 	}
 
 	newUser, err := u.userRepository.Create(user)
@@ -58,15 +59,15 @@ func (u *userUsecase) GetProfileByID(c context.Context, userID string) (*entitie
 	}
 
 	return &entities.User{
-		ID:           user.ID,
-		Username:     user.Username,
-		ProfileImage: user.ProfileImage,
-		Email:        user.Email,
-		FullName:     user.FullName,
-		Gender:       user.Gender,
-		UpdatedAt:    user.UpdatedAt,
-		CreatedAt:    user.CreatedAt,
-		DeletedAt:    user.DeletedAt,
+		ID:            user.ID,
+		Username:      user.Username,
+		ProfileImage:  user.ProfileImage,
+		Email:         user.Email,
+		FullName:      user.FullName,
+		Gender:        user.Gender,
+		UpdatedAt:     user.UpdatedAt,
+		CreatedAt:     user.CreatedAt,
+		DeletedAt:     user.DeletedAt,
 		Organizations: user.Organizations,
 	}, nil
 }
@@ -81,4 +82,27 @@ func (u *userUsecase) CreateRefreshToken(user *entities.User, secret string, exp
 
 func (u *userUsecase) ExtractIDFromToken(requestToken string, secret string) (string, error) {
 	return tokenutil.ExtractIDFromToken(requestToken, secret)
+}
+
+func (u *userUsecase) Update(id uuid.UUID, request *dto.UpdateUserRequest) (*entities.User, error) {
+	user, err := u.userRepository.GetByID(id.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	user.Email = request.Email
+	user.Username = request.Username
+	user.FullName = request.FullName
+	user.Gender = request.Gender
+
+	if request.Password != "" {
+		user.Password = request.Password
+	}
+
+	if request.ProfileImage != "" {
+		user.ProfileImage = request.ProfileImage
+	}
+
+	return &user, u.userRepository.Update(&user)
 }

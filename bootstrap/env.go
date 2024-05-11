@@ -19,6 +19,10 @@ type Env struct {
 	REFRESH_TOKEN_EXPIRY_HOUR int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
 	ACCESS_TOKEN_SECRET       string `mapstructure:"ACCESS_TOKEN_SECRET"`
 	REFRESH_TOKEN_SECRET      string `mapstructure:"REFRESH_TOKEN_SECRET"`
+	CLOUDINARY_CLOUD_NAME      string `mapstructure:"CLOUDINARY_CLOUD_NAME"`
+	CLOUDINARY_API_KEY        string `mapstructure:"CLOUDINARY_API_KEY"`
+	CLOUDINARY_API_SECRET     string `mapstructure:"CLOUDINARY_API_SECRET"`
+	CLOUDINARY_UPLOAD_FOLDER  string `mapstructure:"CLOUDINARY_UPLOAD_FOLDER"`
 }
 
 func NewEnv() *Env {
