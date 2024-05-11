@@ -329,3 +329,24 @@ func (uc *UserController) Update(c echo.Context) error {
 		Data:       response,
 	})
 }
+
+// get dashboard data
+func (uc *UserController) Dashboard(c echo.Context) error {
+	userID := c.Get("x-user-id").(string)
+
+	dashboardData, err := uc.UserUsecase.GetDashboardData(userID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, infra.SuccessResponse{
+		StatusCode: "OK",
+		Message:    "Dashboard data retrieved successfully",
+		Data:       dashboardData,
+	})
+}

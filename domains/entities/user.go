@@ -32,6 +32,7 @@ type UserRepository interface {
 	GetByEmail(email string) (User, error)
 	GetByID(id string) (User, error)
 	Update(user *User) error
+	GetDashboardData(id string) (*dto.DashboardData, error)
 }
 
 type UserUsecase interface {
@@ -43,6 +44,7 @@ type UserUsecase interface {
 	Create(c context.Context, request *dto.RegisterRequest) (*User, error)
 	GetUserByEmail(c context.Context, email string) (User, error)
 	Update(id uuid.UUID,request *dto.UpdateUserRequest) (*User ,error)
+	GetDashboardData(id string) (*dto.DashboardData, error)
 }
 
 func EntityToDtoUser(user *User) dto.User {

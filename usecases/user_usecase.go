@@ -106,3 +106,7 @@ func (u *userUsecase) Update(id uuid.UUID, request *dto.UpdateUserRequest) (*ent
 
 	return &user, u.userRepository.Update(&user)
 }
+
+func (u *userUsecase) GetDashboardData(id string) (*dto.DashboardData, error) {
+	return u.userRepository.GetDashboardData(id)
+}
