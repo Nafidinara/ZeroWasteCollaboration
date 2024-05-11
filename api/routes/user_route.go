@@ -29,4 +29,5 @@ func NewUserRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *ec
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.ACCESS_TOKEN_SECRET))
 	protectedRouter.GET("/profile", uc.Profile)
 	protectedRouter.PUT("/profile", uc.Update)
+	protectedRouter.GET("/dashboard", uc.Dashboard)
 }

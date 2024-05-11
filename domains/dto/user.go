@@ -79,3 +79,16 @@ type RefreshTokenResponse struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
+type CollaborationStatusCount struct {
+	Accepted int64 `json:"accepted"`
+	Rejected int64 `json:"rejected"`
+	Waiting  int64 `json:"waiting"`
+	Running  int64 `json:"running"`
+}
+
+type DashboardData struct {
+	OrganizationCount int64 `json:"organization_count"`
+	AddressCount      int64 `json:"address_count"`
+	CollaborationSend  CollaborationStatusCount `json:"collaboration_send"`
+	CollaborationReceive  CollaborationStatusCount `json:"collaboration_receive"`
+}
