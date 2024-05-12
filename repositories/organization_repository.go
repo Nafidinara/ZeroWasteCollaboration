@@ -24,10 +24,16 @@ func (o *organizationRepository) Create(organization *entities.Organization) (*e
 	return organization, nil
 }
 
+func (o *organizationRepository) GetAllByUserId(userId uuid.UUID) ([]entities.Organization, error) {
+	var organizations []entities.Organization
+	err := o.DB.Where("user_id = ?", userId).Preload("User").
+		Find(&organizations).Error
+	return organizations, err
+}
+
 func (o *organizationRepository) GetByID(id uuid.UUID) (entities.Organization, error) {
 	var organization entities.Organization
-	err := o.DB.Where("organizations.id = ?", id).Preload("User").
-		Joins("INNER JOIN addresses ON organizations.id = addresses.organization_id").
+	err := o.DB.Where("id = ?", id).Preload("User").
 		First(&organization).Error
 	return organization, err
 }

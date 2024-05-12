@@ -30,6 +30,7 @@ type Organization struct {
 
 type OrganizationRepository interface {
 	GetAll() ([]Organization, error)
+	GetAllByUserId(userId uuid.UUID) ([]Organization, error)
 	GetByID(id uuid.UUID) (Organization, error)
 	Create(organization *Organization) (*Organization, error)
 	Update(organization *Organization) error
@@ -39,6 +40,7 @@ type OrganizationRepository interface {
 
 type OrganizationUsecase interface {
 	GetAll() ([]Organization, error)
+	GetAllByUserId(userId uuid.UUID) ([]Organization, error)
 	GetByID(id uuid.UUID) (Organization, error)
 	Create(request *dto.OrganizationRequest) (*Organization, error)
 	Update(organization *Organization) error

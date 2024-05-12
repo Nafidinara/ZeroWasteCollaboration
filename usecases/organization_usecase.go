@@ -25,6 +25,10 @@ func (o *organizationUsecase) GetAll() ([]entities.Organization, error) {
 	return o.organizationRepository.GetAll()
 }
 
+func (o *organizationUsecase) GetAllByUserId(userId uuid.UUID) ([]entities.Organization, error) {
+	return o.organizationRepository.GetAllByUserId(userId)
+}
+
 func (o *organizationUsecase) GetByID(id uuid.UUID) (entities.Organization, error) {
 	return o.organizationRepository.GetByID(id)
 }
@@ -60,7 +64,6 @@ func (o *organizationUsecase) Create(request *dto.OrganizationRequest) (*entitie
 }
 
 func (o *organizationUsecase) Update(organization *entities.Organization) error {
-
 	return o.organizationRepository.Update(organization)
 }
 

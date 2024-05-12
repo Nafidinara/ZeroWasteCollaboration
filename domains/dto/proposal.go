@@ -1,9 +1,9 @@
 package dto
 
 type Proposal struct {
-	Subject    string
-	Content    string
-	Attachment string
+	Subject    string `json:"subject"`
+	Content    string `json:"content"`
+	Attachment string `json:"attachment"`
 }
 
 type ProposalRequest struct {

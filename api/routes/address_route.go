@@ -28,4 +28,5 @@ func NewAddressRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e 
 
 	protectedRouter.POST("/user-addresses", ac.CreateUserAddress)
 	protectedRouter.POST("/organization-addresses", ac.CreateOrganizationAddress)
+	protectedRouter.DELETE("/addresses/:id", ac.Delete)
 }

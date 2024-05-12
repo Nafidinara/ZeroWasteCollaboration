@@ -15,21 +15,22 @@ func NewAddressRepository(db *gorm.DB) entities.AddressRepository {
 	return &addressRepository{DB: db}
 }
 
-//get All
+// get All
 func (a *addressRepository) GetAll() ([]entities.Address, error) {
 	var addresses []entities.Address
 	err := a.DB.Preload("User").Preload("Organization").Find(&addresses).Error
 	return addresses, err
 }
 
-//get by id
+// get by id
 func (a *addressRepository) GetByID(id uuid.UUID) (entities.Address, error) {
 	var address entities.Address
-	err := a.DB.Where("id = ?", id).Preload("User").Preload("Organization").First(&address).Error
+	err := a.DB.Where("id = ?", id).
+		First(&address).Error
 	return address, err
 }
 
-//create
+// create
 func (a *addressRepository) Create(address *entities.Address) (*entities.Address, error) {
 	if err := a.DB.Create(address).Error; err != nil {
 		return nil, err
@@ -37,24 +38,24 @@ func (a *addressRepository) Create(address *entities.Address) (*entities.Address
 	return address, nil
 }
 
-//update
+// update
 func (a *addressRepository) Update(address *entities.Address) error {
 	return a.DB.Save(address).Error
 }
 
-//delete
+// delete
 func (a *addressRepository) Delete(address *entities.Address) error {
 	return a.DB.Delete(address).Error
 }
 
-//get user address
+// get user address
 func (a *addressRepository) GetAllUserAddress(userId uuid.UUID) ([]entities.Address, error) {
 	var address []entities.Address
 	err := a.DB.Where("user_id = ?", userId).Find(&address).Error
 	return address, err
 }
 
-//get organization address
+// get organization address
 func (a *addressRepository) GetAllOrganizationAddress(organizationId uuid.UUID) ([]entities.Address, error) {
 	var address []entities.Address
 	err := a.DB.Where("organization_id = ?", organizationId).Find(&address).Error

@@ -9,11 +9,11 @@ import (
 )
 
 type Collaboration struct {
-	ID           uuid.UUID
-	User         User
-	Organization Organization
-	Proposal     Proposal
-	Status       types.StatusCollaboration
+	ID           uuid.UUID `json:"id"`
+	User         User `json:"user"`
+	Organization Organization `json:"organization"`
+	Proposal     Proposal `json:"proposal"`
+	Status       types.StatusCollaboration `json:"status"`
 }
 
 type CollaborationRequest struct {
@@ -25,4 +25,8 @@ type CollaborationRequest struct {
 	Content        string                    `json:"content" form:"content" binding:"required" validate:"required"`
 	Attachment     multipart.File            `json:"attachment,omitempty" form:"attachment" binding:"required" validate:"required"`
 	// Attachment string `json:"attachment" form:"attachment" binding:"required"`
+}
+
+type CollaborationUpdateStatusRequest struct {
+	Status types.StatusCollaboration `json:"status" form:"status" binding:"required" validate:"required,oneof=accepted rejected waiting running"`
 }

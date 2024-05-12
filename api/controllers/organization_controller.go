@@ -255,3 +255,25 @@ func (oc *OrganizationController) Delete(c echo.Context) error {
 		Data:       nil,
 	})
 }
+
+func (oc *OrganizationController) GetAllByUserId(c echo.Context) error {
+	userId := c.Get("x-user-id").(string)
+
+	organizations, err := oc.OrganizationUsecase.GetAllByUserId(uuid.MustParse(userId))
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	response := entities.ToGetAllResponseOrganizations(organizations)
+
+	return c.JSON(http.StatusOK, infra.SuccessResponse{
+		StatusCode: "OK",
+		Message:    "Success get all organizations",
+		Data:       response,
+	})
+}
