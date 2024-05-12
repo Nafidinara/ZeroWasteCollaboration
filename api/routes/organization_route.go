@@ -27,6 +27,7 @@ func NewOrganizationRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.D
 	protectedRouter := e.Group("")
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.ACCESS_TOKEN_SECRET))
 
+	protectedRouter.GET("/users/organizations", uc.GetAllByUserId)
 	protectedRouter.POST("/organizations", uc.Create)
 	protectedRouter.PUT("/organizations/:id", uc.Update)
 	protectedRouter.DELETE("/organizations/:id", uc.Delete)

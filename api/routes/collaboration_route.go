@@ -30,5 +30,8 @@ func NewCollaborationRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.
 
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.ACCESS_TOKEN_SECRET))
 
+	protectedRouter.GET("/collaborations", cc.GetAllByUserId)
 	protectedRouter.POST("/collaborations", cc.Create)
+	protectedRouter.PUT("/collaborations/:id", cc.Update)
+	protectedRouter.DELETE("/collaborations/:id", cc.Delete)
 }

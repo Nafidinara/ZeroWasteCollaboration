@@ -39,3 +39,13 @@ func (o *CollaborationRepository) Update(collaboration *entities.Collaboration) 
 func (o *CollaborationRepository) Delete(collaboration *entities.Collaboration) error {
 	return o.DB.Delete(collaboration).Error
 }
+
+func (o *CollaborationRepository) GetAllByUserId(userId uuid.UUID) ([]entities.Collaboration, error) {
+	var collaborations []entities.Collaboration
+	err := o.DB.Where("user_id = ?", userId).
+		Preload("User").
+		Preload("Organization").
+		Preload("Proposal").
+		Find(&collaborations).Error
+	return collaborations, err
+}

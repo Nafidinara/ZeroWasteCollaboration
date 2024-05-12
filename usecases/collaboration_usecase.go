@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -43,11 +44,26 @@ func (c *CollaborationUsecase) Create(request *dto.CollaborationRequest) (*entit
 	return newCollaboration, nil
 }
 
-func (c *CollaborationUsecase) Update(collaboration *entities.Collaboration) error {
-	collaboration.UpdatedAt = time.Now()
-	return c.collaborationRepository.Update(collaboration)
+func (c *CollaborationUsecase) Update(id uuid.UUID, userId uuid.UUID, request *dto.CollaborationUpdateStatusRequest) (*entities.Collaboration, error) {
+	existingCollaboration, err := c.collaborationRepository.GetByID(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if existingCollaboration.Organization.UserID != userId {
+		return nil, errors.New("unauthorized access, you are not the owner of this organization")
+	}
+
+	existingCollaboration.Status = request.Status
+
+	return &existingCollaboration, c.collaborationRepository.Update(&existingCollaboration)
 }
 
 func (c *CollaborationUsecase) Delete(id uuid.UUID) error {
 	return c.collaborationRepository.Delete(&entities.Collaboration{ID: id})
+}
+
+func (c *CollaborationUsecase) GetAllByUserId(userId uuid.UUID) ([]entities.Collaboration, error) {
+	return c.collaborationRepository.GetAllByUserId(userId)
 }

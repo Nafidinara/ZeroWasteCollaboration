@@ -26,6 +26,7 @@ type Collaboration struct {
 
 type CollaborationRepository interface {
 	GetByID(id uuid.UUID) (Collaboration, error)
+	GetAllByUserId(userId uuid.UUID) ([]Collaboration, error)
 	Create(collaboration *Collaboration) (*Collaboration, error)
 	Update(collaboration *Collaboration) error
 	Delete(collaboration *Collaboration) error
@@ -33,8 +34,9 @@ type CollaborationRepository interface {
 
 type CollaborationUsecase interface {
 	GetByID(id uuid.UUID) (Collaboration, error)
+	GetAllByUserId(userId uuid.UUID) ([]Collaboration, error)
 	Create(request *dto.CollaborationRequest) (*Collaboration, error)
-	Update(collaboration *Collaboration) error
+	Update(id uuid.UUID, user_id uuid.UUID, request *dto.CollaborationUpdateStatusRequest) (*Collaboration, error)
 	Delete(id uuid.UUID) error
 }
 
@@ -65,4 +67,12 @@ func ToResponseCollaboration(collaboration *Collaboration) *dto.Collaboration {
 		},
 		Status: collaboration.Status,
 	}
+}
+
+func ToResponseCollaborations(collaborations []Collaboration) []dto.Collaboration {
+	var responseCollaborations []dto.Collaboration
+	for _, collaboration := range collaborations {
+		responseCollaborations = append(responseCollaborations, *ToResponseCollaboration(&collaboration))
+	}
+	return responseCollaborations
 }
