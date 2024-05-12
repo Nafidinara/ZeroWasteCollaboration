@@ -32,8 +32,6 @@ type UserAddressRequest struct {
 
 type AddressResponse struct {
 	ID uuid.UUID `json:"id"`
-	// UserId         uuid.UUID `json:"user_id"`
-	// OrganizationId uuid.UUID `json:"organization_id"`
 	Country      string       `json:"country"`
 	State        string       `json:"state"`
 	City         string       `json:"city"`

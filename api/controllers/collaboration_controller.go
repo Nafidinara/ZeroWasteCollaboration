@@ -150,7 +150,17 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 		})
 	}
 
-	response := entities.ToResponseCollaboration(collaboration)
+	newCollaboration, err := cc.CollaborationUsecase.GetByID(collaboration.ID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	response := entities.ToResponseCollaboration(&newCollaboration)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",
