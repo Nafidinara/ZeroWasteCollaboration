@@ -56,3 +56,5 @@ func (m *UserRepositoryMock) GetDashboardData(id string) (*dto.DashboardData, er
 
 	return args.Get(0).(*dto.DashboardData), args.Error(1)
 }
+
+
