@@ -3,33 +3,27 @@ module redoocehub
 go 1.22.0
 
 require (
+	github.com/cloudinary/cloudinary-go v1.7.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/spf13/viper v1.18.2
+	github.com/stretchr/testify v1.9.0
+	go.mongodb.org/mongo-driver v1.15.0
 	golang.org/x/crypto v0.22.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.10
 )
 
 require (
-	dario.cat/mergo v1.0.0 // indirect
-	github.com/bep/godartsass v1.2.0 // indirect
-	github.com/bep/godartsass/v2 v2.0.0 // indirect
-	github.com/bep/golibsass v1.1.1 // indirect
-	github.com/cli/safeexec v1.0.1 // indirect
-	github.com/cloudinary/cloudinary-go v1.7.0 // indirect
-	github.com/cosmtrek/air v1.52.0 // indirect
-	github.com/creack/pty v1.1.21 // indirect
 	github.com/creasty/defaults v1.5.1 // indirect
-	github.com/fatih/color v1.16.0 // indirect
-	github.com/gobwas/glob v0.2.3 // indirect
-	github.com/gohugoio/hugo v0.125.7 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/gorilla/schema v1.2.0 // indirect
-	github.com/mitchellh/hashstructure v1.1.0 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
-	github.com/tdewolff/parse/v2 v2.7.13 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+	github.com/rogpeppe/go-internal v1.12.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
 require (
