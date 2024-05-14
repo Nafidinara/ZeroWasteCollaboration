@@ -94,4 +94,5 @@ jobs:
             docker pull nafidinara/redoocehub:1.0
             docker-compose up -d
             docker cp .env redoocehub:/
-            echo "Deploy completed"
+            docker restart redoocehub
+            echo "++++++++ Deploy completed ++++++++"
