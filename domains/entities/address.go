@@ -24,19 +24,16 @@ type Address struct {
 }
 
 type AddressRepository interface {
-	GetByID(id uuid.UUID) (Address, error)
 	Create(address *Address) (*Address, error)
-	Update(address *Address) error
 	Delete(address *Address) error
 	GetAllUserAddress(userId uuid.UUID) ([]Address, error)
 	GetAllOrganizationAddress(organizationId uuid.UUID) ([]Address, error)
+	GetByID(id uuid.UUID) (Address, error)
 }
 
 type AddressUsecase interface {
-	GetByID(id uuid.UUID) (Address, error)
 	CreateUserAddress(request *dto.UserAddressRequest) (*Address, error)
 	CreateOrganizationAddress(request *dto.OrganizationAddressRequest) (*Address, error)
-	Update(address *Address) error
 	Delete(id uuid.UUID) error
 	GetAllUserAddress(userId uuid.UUID) ([]Address, error)
 	GetAllOrganizationAddress(organizationId uuid.UUID) ([]Address, error)

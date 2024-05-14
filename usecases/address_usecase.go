@@ -21,10 +21,6 @@ func NewAddressUsecase(addressRepository entities.AddressRepository, timeout tim
 	}
 }
 
-func (a *addressUsecase) GetByID(id uuid.UUID) (entities.Address, error) {
-	return a.addressRepository.GetByID(id)
-}
-
 func (a *addressUsecase) CreateUserAddress(request *dto.UserAddressRequest) (*entities.Address, error) {
 	address := &entities.Address{
 		ID:         uuid.New(),
@@ -63,11 +59,6 @@ func (a *addressUsecase) CreateOrganizationAddress(request *dto.OrganizationAddr
 	}
 
 	return newAddress, nil
-}
-
-// update
-func (a *addressUsecase) Update(address *entities.Address) error {
-	return a.addressRepository.Update(address)
 }
 
 // delete

@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    image: nafidinara/redoocehub:1.0
+    ports:
+      - "5001:8080"
+    networks:
+    - mynet
+    env_file: .env
+
+networks:
+  mynet:
+    driver: "bridge"
