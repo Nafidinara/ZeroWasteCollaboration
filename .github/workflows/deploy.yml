@@ -92,6 +92,6 @@ jobs:
             echo ${{ secrets.CLOUDINARY_API_SECRET }} >> .env && \
             echo ${{ secrets.CLOUDINARY_UPLOAD_FOLDER }} >> .env
             docker-compose pull
-            docker cp .env redoocehub:/
             docker-compose up -d
+            docker cp .env redoocehub:/
             echo "Deploy completed"

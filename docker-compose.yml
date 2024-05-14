@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: redoocehub
     build: .
     image: nafidinara/redoocehub:1.0
     ports:
