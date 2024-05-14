@@ -19,7 +19,7 @@ FROM gcr.io/distroless/base-debian12 AS runtime
 WORKDIR /
 
 COPY --from=build ./app/main ./main
-COPY --from=build ./app/.env .
+# COPY --from=build ./app/.env .
 
 EXPOSE 8080
 
