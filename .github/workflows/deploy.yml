@@ -74,7 +74,23 @@ jobs:
             cd ~/redoocehub
             docker compose down
             touch .env && \
-            echo ${{ secrets.ENVIRONMENT_VARIABLE }} > .env
+            echo ${{ secrets.APP_ENV }} > .env && \
+            echo ${{ secrets.SERVER_ADDRESS }} >> .env && \
+            echo ${{ secrets.PORT }} >> .env && \
+            echo ${{ secrets.CONTEXT_TIMEOUT }} >> .env && \
+            echo ${{ secrets.DB_HOST }} >> .env && \
+            echo ${{ secrets.DB_PORT }} >> .env && \
+            echo ${{ secrets.DB_USER }} >> .env && \
+            echo ${{ secrets.DB_PASS }} >> .env && \
+            echo ${{ secrets.DB_NAME }} >> .env && \
+            echo ${{ secrets.ACCESS_TOKEN_EXPIRY_HOUR }} >> .env && \
+            echo ${{ secrets.REFRESH_TOKEN_EXPIRY_HOUR }} >> .env && \
+            echo ${{ secrets.ACCESS_TOKEN_SECRET }} >> .env && \
+            echo ${{ secrets.REFRESH_TOKEN_SECRET }} >> .env && \
+            echo ${{ secrets.CLOUDINARY_CLOUD_NAME }} >> .env && \
+            echo ${{ secrets.CLOUDINARY_API_KEY }} >> .env && \
+            echo ${{ secrets.CLOUDINARY_API_SECRET }} >> .env && \
+            echo ${{ secrets.CLOUDINARY_UPLOAD_FOLDER }} >> .env
             docker-compose pull
             docker cp .env redoocehub:/
             docker-compose up -d
