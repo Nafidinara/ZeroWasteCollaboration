@@ -18,6 +18,7 @@ func NewUserRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *ec
 
 	uc := &controllers.UserController{
 		UserUsecase: usecases.NewUserUsecase(ur, timeout),
+		ChatbotUsecase: usecases.NewChatbotUsecase(timeout),
 		Env:         env,
 	}
 
@@ -30,4 +31,5 @@ func NewUserRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *ec
 	protectedRouter.GET("/profile", uc.Profile)
 	protectedRouter.PUT("/profile", uc.Update)
 	protectedRouter.GET("/dashboard", uc.Dashboard)
+	protectedRouter.GET("/chatbot", uc.SendMessageChatbot)
 }

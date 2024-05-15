@@ -11,6 +11,7 @@ import (
 	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
+	"redoocehub/internal/email"
 	"redoocehub/internal/validation"
 	"redoocehub/usecases"
 )
@@ -166,6 +167,28 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 	}
 
 	response := entities.ToResponseCollaboration(&newCollaboration)
+
+	emailReq := dto.EmailRequest{
+		OrganizationEmail:  response.Organization.Email,
+		UserFullName:       response.User.FullName,
+		ProposalSubject:    response.Proposal.Subject,
+		ProposalContent:    response.Proposal.Content,
+		ProposalAttachment: response.Proposal.Attachment,
+	}
+
+	err = email.NewEmailService().SendEmail(emailReq)
+
+	fmt.Println("emailReq: ", err)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	fmt.Println("success send email to: ", emailReq.OrganizationEmail)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
 		StatusCode: "OK",

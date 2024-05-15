@@ -43,7 +43,7 @@ type UserUsecase interface {
 	GetProfileByID(c context.Context, userID string) (*User, error)
 	Create(c context.Context, request *dto.RegisterRequest) (*User, error)
 	GetUserByEmail(c context.Context, email string) (User, error)
-	Update(id uuid.UUID,request *dto.UpdateUserRequest) (*User ,error)
+	Update(id uuid.UUID, request *dto.UpdateUserRequest) (*User, error)
 	GetDashboardData(id string) (*dto.DashboardData, error)
 }
 
@@ -101,14 +101,14 @@ func ToProfileResponseUser(user *User) *dto.ProfileResponse {
 
 	for _, org := range user.Organizations {
 		orgs = append(orgs, dto.Organization{
-			Name: org.Name,
-			Description: org.Description,
-			Type: org.Type,
+			Name:         org.Name,
+			Description:  org.Description,
+			Type:         org.Type,
 			ProfileImage: org.ProfileImage,
 			FoundingDate: org.FoundingDate,
-			Email: org.Email,
-			Website: org.Website,
-			Phone: org.Phone,
+			Email:        org.Email,
+			Website:      org.Website,
+			Phone:        org.Phone,
 		})
 	}
 
@@ -116,11 +116,11 @@ func ToProfileResponseUser(user *User) *dto.ProfileResponse {
 
 	for _, address := range user.Addresses {
 		addresses = append(addresses, dto.Address{
-			Country: address.Country,
-			City: address.City,
-			Street: address.Street,
+			Country:    address.Country,
+			City:       address.City,
+			Street:     address.Street,
 			PostalCode: address.PostalCode,
-			State: address.State,
+			State:      address.State,
 		})
 	}
 

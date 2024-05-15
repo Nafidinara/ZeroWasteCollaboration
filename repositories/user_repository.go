@@ -33,9 +33,20 @@ func (u *userRepository) GetByEmail(email string) (entities.User, error) {
 func (u *userRepository) GetByID(id string) (entities.User, error) {
 	var user entities.User
 	err := u.DB.Where("users.id = ?", id).Preload("Organizations").
-		Joins("LEFT JOIN addresses ON users.id = addresses.user_id").
 		First(&user).Error
-	// fmt.Println(user)
+
+	if err != nil {
+		return user, fmt.Errorf("user not found")
+	}
+
+	err = u.DB.Table("addresses").
+		Where("user_id = ?", id).
+		Find(&user.Addresses).Error
+
+	if err != nil {
+		return user, fmt.Errorf("address not found")
+	}
+
 	return user, err
 }
 

@@ -1,8 +1,6 @@
 package bootstrap
 
 import (
-	"fmt"
-	"io/ioutil"
 	"log"
 
 	"github.com/spf13/viper"
@@ -25,6 +23,11 @@ type Env struct {
 	CLOUDINARY_API_KEY        string `mapstructure:"CLOUDINARY_API_KEY"`
 	CLOUDINARY_API_SECRET     string `mapstructure:"CLOUDINARY_API_SECRET"`
 	CLOUDINARY_UPLOAD_FOLDER  string `mapstructure:"CLOUDINARY_UPLOAD_FOLDER"`
+	SMTP_SERVER               string `mapstructure:"SMTP_SERVER"`
+	SMTP_PORT                 string `mapstructure:"SMTP_PORT"`
+	SMTP_USERNAME             string `mapstructure:"SMTP_USERNAME"`
+	SMTP_PASSWORD             string `mapstructure:"SMTP_PASSWORD"`
+	OPENAI_API_KEY			string `mapstructure:"OPENAI_API_KEY"`
 }
 
 func NewEnv() *Env {
@@ -39,14 +42,14 @@ func NewEnv() *Env {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		files, err := ioutil.ReadDir("./")
-		if err != nil {
-			log.Fatal(err)
-		}
+		// files, err := ioutil.ReadDir("./")
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
-		for _, f := range files {
-			fmt.Println(f.Name())
-		}
+		// for _, f := range files {
+		// 	fmt.Println(f.Name())
+		// }
 		log.Fatal("Can't find the file .env : ", err)
 	}
 

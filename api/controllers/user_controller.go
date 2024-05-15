@@ -17,8 +17,9 @@ import (
 )
 
 type UserController struct {
-	UserUsecase entities.UserUsecase
-	Env         *bootstrap.Env
+	UserUsecase    entities.UserUsecase
+	ChatbotUsecase entities.ChatbotUsecase
+	Env            *bootstrap.Env
 }
 
 func (uc *UserController) Register(c echo.Context) error {
@@ -71,7 +72,7 @@ func (uc *UserController) Register(c echo.Context) error {
 			Message:    "User already exists",
 			Data:       nil,
 		})
-	} 
+	}
 
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 
@@ -84,9 +85,9 @@ func (uc *UserController) Register(c echo.Context) error {
 	}
 
 	uploadUrl, err := usecases.NewMediaUpload().FileUpload(dto.File{File: formFile}, entities.CloudinaryEnvSetting{
-		CloudName: uc.Env.CLOUDINARY_CLOUD_NAME,
-		ApiKey:    uc.Env.CLOUDINARY_API_KEY,
-		ApiSecret: uc.Env.CLOUDINARY_API_SECRET,
+		CloudName:    uc.Env.CLOUDINARY_CLOUD_NAME,
+		ApiKey:       uc.Env.CLOUDINARY_API_KEY,
+		ApiSecret:    uc.Env.CLOUDINARY_API_SECRET,
 		UploadFolder: uc.Env.CLOUDINARY_UPLOAD_FOLDER,
 	})
 
@@ -147,7 +148,7 @@ func (uc *UserController) Login(c echo.Context) error {
 	var request dto.LoginRequest
 
 	err := c.Bind(&request)
-	
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
 			StatusCode: "Bad Request",
@@ -165,7 +166,7 @@ func (uc *UserController) Login(c echo.Context) error {
 	}
 
 	user, err := uc.UserUsecase.GetUserByEmail(c.Request().Context(), request.Email)
-	
+
 	if err != nil {
 		return c.JSON(http.StatusNotFound, infra.ErrorResponse{
 			StatusCode: "Not Found",
@@ -330,7 +331,6 @@ func (uc *UserController) Update(c echo.Context) error {
 	})
 }
 
-// get dashboard data
 func (uc *UserController) Dashboard(c echo.Context) error {
 	userID := c.Get("x-user-id").(string)
 
@@ -348,5 +348,53 @@ func (uc *UserController) Dashboard(c echo.Context) error {
 		StatusCode: "OK",
 		Message:    "Dashboard data retrieved successfully",
 		Data:       dashboardData,
+	})
+}
+
+func (uc *UserController) SendMessageChatbot(c echo.Context) error {
+
+	var request dto.ChatbotRequest
+
+	err := c.Bind(&request)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
+			StatusCode: "Bad Request",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	if err := validation.ValidateRequest(request); err != nil {
+		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
+			StatusCode: "Bad Request",
+			Message:    "make sure you follow the input requirements",
+			Data:       err,
+		})
+	}
+
+	chatbotConfig := entities.ChatbotConfig{
+		APIKey: uc.Env.OPENAI_API_KEY,
+	}
+
+	reply, err := uc.ChatbotUsecase.SendMessage(chatbotConfig, request)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
+			StatusCode: "Internal Server Error",
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	response := dto.ChatbotResponse{
+		Message:   request.Message,
+		Response:  reply,
+	}
+
+	return c.JSON(http.StatusOK, infra.SuccessResponse{
+		StatusCode: "OK",
+		Message:    "Message sent successfully",
+		Data:       response,
 	})
 }

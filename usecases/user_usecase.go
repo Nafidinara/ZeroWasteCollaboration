@@ -69,6 +69,7 @@ func (u *userUsecase) GetProfileByID(c context.Context, userID string) (*entitie
 		CreatedAt:     user.CreatedAt,
 		DeletedAt:     user.DeletedAt,
 		Organizations: user.Organizations,
+		Addresses:     user.Addresses,
 	}, nil
 }
 
