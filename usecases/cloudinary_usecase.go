@@ -6,10 +6,10 @@ import (
 	"redoocehub/internal/cloudinary"
 )
 
-type media struct {}
+type media struct{}
 
 func NewMediaUpload() entities.CloudinaryRepository {
-    return &media{}
+	return &media{}
 }
 
 func (*media) FileUpload(file dto.File, config entities.CloudinaryEnvSetting) (string, error) {
