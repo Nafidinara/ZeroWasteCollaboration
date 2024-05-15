@@ -31,5 +31,5 @@ func NewUserRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *ec
 	protectedRouter.GET("/profile", uc.Profile)
 	protectedRouter.PUT("/profile", uc.Update)
 	protectedRouter.GET("/dashboard", uc.Dashboard)
-	protectedRouter.GET("/chatbot", uc.SendMessageChatbot)
+	protectedRouter.POST("/chatbot", uc.SendMessageChatbot)
 }
