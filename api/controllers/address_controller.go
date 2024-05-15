@@ -11,6 +11,7 @@ import (
 	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
+	"redoocehub/internal/constant"
 	"redoocehub/internal/validation"
 )
 
@@ -28,7 +29,7 @@ func (ac *AddressController) CreateUserAddress(c echo.Context) error {
 
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
+			StatusCode: constant.ErrBadRequest,
 			Message:    err.Error(),
 			Data:       nil,
 		})
@@ -36,8 +37,8 @@ func (ac *AddressController) CreateUserAddress(c echo.Context) error {
 
 	if err := validation.ValidateRequest(request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrValidation,
 			Data:       err,
 		})
 	}
@@ -50,15 +51,15 @@ func (ac *AddressController) CreateUserAddress(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrCreateUserAddress,
+			Data:       err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success created new address",
+		StatusCode: constant.SuccessCreated,
+		Message:    constant.SuccessCreateAddress,
 		Data:       newAddress,
 	})
 }
@@ -68,7 +69,7 @@ func (ac *AddressController) CreateOrganizationAddress(c echo.Context) error {
 
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
+			StatusCode: constant.ErrBadRequest,
 			Message:    err.Error(),
 			Data:       nil,
 		})
@@ -76,8 +77,8 @@ func (ac *AddressController) CreateOrganizationAddress(c echo.Context) error {
 
 	if err := validation.ValidateRequest(request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrValidation,
 			Data:       err,
 		})
 	}
@@ -86,15 +87,15 @@ func (ac *AddressController) CreateOrganizationAddress(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrCreateOrganizationAddress,
+			Data:       err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success created new address",
+		StatusCode: constant.SuccessCreated,
+		Message:    constant.SuccessCreateAddress,
 		Data:       newAddress,
 	})
 }
@@ -107,7 +108,6 @@ func (ac *AddressController) GetAllAddress(c echo.Context) error {
 	var address []entities.Address
 	var err error
 
-
 	fmt.Println(organizationId, userId)
 
 	if organizationId != "" {
@@ -116,31 +116,29 @@ func (ac *AddressController) GetAllAddress(c echo.Context) error {
 		address, err = ac.AddressUsecase.GetAllUserAddress(uuid.MustParse(userId))
 	} else {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you input the parameter organization_id or user_id",
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrParameterNotFound,
 			Data:       nil,
 		})
 	}
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
+			StatusCode: constant.ErrInternalServer,
 			Message:    err.Error(),
 			Data:       nil,
 		})
 	}
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success retrieved all address",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.ErrInternalServer,
 		Data:       address,
 	})
 }
 
-//delete 
+// delete
 func (ac *AddressController) Delete(c echo.Context) error {
-
-	fmt.Println("masuk delete")
 
 	idParam := c.Param("id")
 
@@ -150,15 +148,15 @@ func (ac *AddressController) Delete(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrDeleteAddress,
 			Data:       nil,
 		})
 	}
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success deleted address",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.SuccessDeleteAddress,
 		Data:       nil,
 	})
 }
