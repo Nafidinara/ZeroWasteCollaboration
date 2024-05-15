@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -11,6 +10,7 @@ import (
 	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
+	"redoocehub/internal/constant"
 	"redoocehub/internal/email"
 	"redoocehub/internal/validation"
 	"redoocehub/usecases"
@@ -47,17 +47,17 @@ func (cc *CollaborationController) GetByID(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrNotFoundCollaboration,
+			Data:       err.Error(),
 		})
 	}
 
 	response := entities.ToResponseCollaboration(&collaboration)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success retrieved collaboration",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.SuccessGetCollaboration,
 		Data:       response,
 	})
 }
@@ -71,9 +71,9 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if errFile != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    errFile.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrFailedGetFile,
+			Data:       errFile.Error(),
 		})
 	}
 
@@ -81,9 +81,9 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if errFile != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    errFile.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrFailedOpenFile,
+			Data:       errFile.Error(),
 		})
 	}
 
@@ -91,7 +91,7 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
+			StatusCode: constant.ErrBadRequest,
 			Message:    err.Error(),
 			Data:       nil,
 		})
@@ -105,8 +105,8 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if err := validation.ValidateRequest(request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrValidation,
 			Data:       err,
 		})
 	}
@@ -120,13 +120,11 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrUploadFile,
+			Data:       err.Error(),
 		})
 	}
-
-	fmt.Println("uploadUrl: ", uploadUrl)
 
 	proposalReq := dto.ProposalRequest{
 		Subject:    request.Subject,
@@ -138,9 +136,9 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrFailedProposal,
+			Data:       err.Error(),
 		})
 	}
 
@@ -150,9 +148,9 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrCreateCollaboration,
+			Data:       err.Error(),
 		})
 	}
 
@@ -160,9 +158,9 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrNotFoundCollaboration,
+			Data:       err.Error(),
 		})
 	}
 
@@ -178,21 +176,17 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 
 	err = email.NewEmailService().SendEmail(emailReq)
 
-	fmt.Println("emailReq: ", err)
-
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrFailedSendEmail,
+			Data:       err.Error(),
 		})
 	}
 
-	fmt.Println("success send email to: ", emailReq.OrganizationEmail)
-
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success created collaboration",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.SuccessCreateCollaboration,
 		Data:       response,
 	})
 }
@@ -205,7 +199,7 @@ func (cc *CollaborationController) Update(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
+			StatusCode: constant.ErrBadRequest,
 			Message:    err.Error(),
 			Data:       nil,
 		})
@@ -213,8 +207,8 @@ func (cc *CollaborationController) Update(c echo.Context) error {
 
 	if err := validation.ValidateRequest(request); err != nil {
 		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
+			StatusCode: constant.ErrBadRequest,
+			Message:    constant.ErrParameterNotFound,
 			Data:       err,
 		})
 	}
@@ -228,7 +222,7 @@ func (cc *CollaborationController) Update(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
+			StatusCode: constant.ErrInternalServer,
 			Message:    err.Error(),
 			Data:       nil,
 		})
@@ -237,8 +231,8 @@ func (cc *CollaborationController) Update(c echo.Context) error {
 	response := entities.ToResponseCollaboration(collaboration)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success updated collaboration status",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.SuccessUpdateCollaboration,
 		Data:       response,
 	})
 }
@@ -251,17 +245,17 @@ func (cc *CollaborationController) GetAllByUserId(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrNotFoundCollaboration,
+			Data:       err.Error(),
 		})
 	}
 
 	response := entities.ToResponseCollaborations(collaborations)
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success get all collaborations",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.SuccessGetAllCollaboration,
 		Data:       response,
 	})
 }
@@ -276,15 +270,15 @@ func (cc *CollaborationController) Delete(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
+			StatusCode: constant.ErrInternalServer,
+			Message:    constant.ErrFailedDeleteCollaboration,
+			Data:       err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success deleted collaboration",
+		StatusCode: constant.SuccessOk,
+		Message:    constant.SuccessDeleteCollaboration,
 		Data:       nil,
 	})
 }
