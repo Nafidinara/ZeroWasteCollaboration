@@ -90,10 +90,14 @@ jobs:
             echo ${{ secrets.CLOUDINARY_CLOUD_NAME }} >> .env && \
             echo ${{ secrets.CLOUDINARY_API_KEY }} >> .env && \
             echo ${{ secrets.CLOUDINARY_API_SECRET }} >> .env && \
-            echo ${{ secrets.CLOUDINARY_UPLOAD_FOLDER }} >> .env
+            echo ${{ secrets.CLOUDINARY_UPLOAD_FOLDER }} >> .env && \
+            echo ${{ secrets.OPENAI_API_KEY }} >> .env && \
+            echo ${{ secrets.SMTP_SERVER }} >> .env && \
+            echo ${{ secrets.SMTP_PORT }} >> .env && \
+            echo ${{ secrets.SMTP_USERNAME }} >> .env && \
+            echo ${{ secrets.SMTP_PASSWORD }} >> .env
             docker pull nafidinara/redoocehub:1.0
             docker-compose up -d
             docker cp .env redoocehub:/
             docker restart redoocehub
             echo "++++++++ Deploy completed ++++++++"
-            
