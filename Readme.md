@@ -31,6 +31,17 @@ Aplikasi dibangun menggunakan clean architecture dan beberapa stack seperti:
 - **CI/CD**: Github Actions
 - **Unit Test**: testify, mockery
 - **Other Services**: Open AI, Mailtrap, Cloudinary
+- **API Documentation**: Postman
+
+## Documents
+### API Docs
+lorem ipsum
+### ERD
+![RedooceHub ERD](assets/readme/erd.png)
+### HLA
+![RedooceHub HLA](assets/readme/HLA-trasparent.png)
+### Slide
+lorem ipsum
 
 ## Prerequisite
 ### Open AI
@@ -63,7 +74,6 @@ MAILTRAP_PASSWORD=your_mailtrap_password_here
 ```
 
 ## Run Local
-
 ### Clone Repository
 ```
 git clone https://github.com/Nafidinara/ZeroWasteCollaboration.git
@@ -92,14 +102,3 @@ go run cmd/main.go
 ```
 docker compose up -d
 ```
-
-## Documents
-### API Docs
-lorem ipsum
-### ERD
-lorem ipsum
-### HLA
-lorem ipsum
-### Slide
-lorem ipsum
-
