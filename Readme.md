@@ -41,7 +41,7 @@ https://documenter.getpostman.com/view/9643281/2sA3JT1xQ1
 ### HLA
 ![RedooceHub HLA](assets/readme/HLA-trasparent.png)
 ### Slide
-lorem ipsum
+https://www.canva.com/design/DAGFdeIhp0M/8OpDH41H6fAbVny6XJ6tqQ/edit
 
 ## Prerequisite
 ### Open AI
