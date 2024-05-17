@@ -61,7 +61,13 @@ func (c *CollaborationUsecase) Update(id uuid.UUID, userId uuid.UUID, request *d
 }
 
 func (c *CollaborationUsecase) Delete(id uuid.UUID) error {
-	return c.collaborationRepository.Delete(&entities.Collaboration{ID: id})
+	existingCollaboration, err := c.collaborationRepository.GetByID(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.collaborationRepository.Delete(&existingCollaboration)
 }
 
 func (c *CollaborationUsecase) GetAllByUserId(userId uuid.UUID) ([]entities.Collaboration, error) {

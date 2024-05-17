@@ -42,14 +42,6 @@ func NewEnv() *Env {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		// files, err := ioutil.ReadDir("./")
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-
-		// for _, f := range files {
-		// 	fmt.Println(f.Name())
-		// }
 		log.Fatal("Can't find the file .env : ", err)
 	}
 

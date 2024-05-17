@@ -1,0 +1,3264 @@
+{
+	"info": {
+		"_postman_id": "5d10b6a2-2cc8-4e56-8cfc-8dc536f2bb1a",
+		"name": "redooce-hub-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9643281",
+		"_collection_link": "https://warped-rocket-446290.postman.co/workspace/My-Workspace~05953c05-30ea-4b57-8802-4505535ff6d0/collection/9643281-5d10b6a2-2cc8-4e56-8cfc-8dc536f2bb1a?action=share&source=collection_link&creator=9643281"
+	},
+	"item": [
+		{
+			"name": "Authorization",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"access_token\", jsonData.data.accessToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\":\"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "sucess",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\":\"password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8080/api/v1/users/login",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:41:15 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "819"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success login\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"username\": \"johndoe\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n            \"email\": \"johndoe@example.com\",\n            \"fullname\": \"John Doe Pasaribu\",\n            \"Gender\": \"male\"\n        },\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmdWxsbmFtZSI6IkpvaG4gRG9lIFBhc2FyaWJ1IiwiZW1haWwiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwidXNlcm5hbWUiOiJqb2huZG9lIiwiZ2VuZGVyIjoibWFsZSIsImlkIjoiYTQ5MThmMjAtNDg3Mi00ZDVkLThhYTUtNmIyODkwODE1Yjg1IiwiZXhwIjoxNzE1OTEwMDc1fQ.K9OTyboGU4tE9zIK0rCzz_QMhkFeJFivtDOgxWpG_60\",\n        \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE0OTE4ZjIwLTQ4NzItNGQ1ZC04YWE1LTZiMjg5MDgxNWI4NSIsImV4cCI6MTcxNjUwNzY3NX0.riOnVDpSs9nBt6un_3KY_Lx2kTJHVg_oS70AYICCUBc\"\n    }\n}"
+						},
+						{
+							"name": "unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"johndoewrong@example.com\",\n    \"password\":\"password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:42:28 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "68"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Unauthorized\",\n    \"message\": \"User not found\",\n    \"data\": {}\n}"
+						},
+						{
+							"name": "invalid password",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\":\"passwordwrong\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:43:45 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "75"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Unauthorized\",\n    \"message\": \"Invalid credentials\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"johndoe@example.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:44:09 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "124"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field Password is required\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"profile"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/profile",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:46:53 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1547"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"OK\",\n    \"message\": \"Profile retrieved successfully\",\n    \"data\": {\n        \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n        \"username\": \"johndoe\",\n        \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n        \"email\": \"johndoe@example.com\",\n        \"fullname\": \"John Doe Pasaribu\",\n        \"Gender\": \"male\",\n        \"organizations\": [\n            {\n                \"name\": \"PlanetCare Alliance Update\",\n                \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n                \"type\": \"company\",\n                \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n                \"founding_date\": \"2024-05-10T07:00:00+07:00\",\n                \"email\": \"info@planetcarealliance.org\",\n                \"website\": \"https://planetcarealliance.org\",\n                \"phone\": \"+33123456789\"\n            },\n            {\n                \"name\": \"PlanetCare Alliance\",\n                \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n                \"type\": \"company\",\n                \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903317/redoocehub/x8srk97styhxtzkgvz8k.png\",\n                \"founding_date\": \"2024-05-23T07:00:00+07:00\",\n                \"email\": \"info@planetcarealliance.org\",\n                \"website\": \"https://planetcarealliance.org\",\n                \"phone\": \"+33123456789\"\n            }\n        ],\n        \"addresses\": [\n            {\n                \"country\": \"Indonesia\",\n                \"state\": \"Jawa Barat\",\n                \"city\": \"Bandung\",\n                \"postal_code\": \"94103\",\n                \"street\": \"jl bunga bawar\"\n            },\n            {\n                \"country\": \"United States\",\n                \"state\": \"California\",\n                \"city\": \"San Francisco\",\n                \"postal_code\": \"94103\",\n                \"street\": \"123 Main Street\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullname",
+									"value": "John Doe Pasaribu",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "johndoe",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "johndoe@example.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": "/Users/nafidinara/Downloads/GitHub.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "fullname",
+											"value": "John Doe Pasaribu",
+											"type": "text"
+										},
+										{
+											"key": "gender",
+											"value": "male",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "johndoe",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "johndoe@example.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/GitHub.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:20:52 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "913"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Created\",\n    \"message\": \"Success register user\",\n    \"data\": {\n        \"id\": \"b404036f-6a5d-40c9-82e4-fbadd541c64f\",\n        \"email\": \"johndoe@example.com\",\n        \"fullname\": \"John Doe Pasaribu\",\n        \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715901651/redoocehub/jy0g185zws6ijjrxuk1k.png\",\n        \"gender\": \"male\",\n        \"username\": \"johndoe\",\n        \"created_at\": \"2024-05-17T06:20:52.365+07:00\",\n        \"updated_at\": \"2024-05-17T06:20:52.365+07:00\",\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmdWxsbmFtZSI6IkpvaG4gRG9lIFBhc2FyaWJ1IiwiZW1haWwiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwidXNlcm5hbWUiOiJqb2huZG9lIiwiZ2VuZGVyIjoibWFsZSIsImlkIjoiYjQwNDAzNmYtNmE1ZC00MGM5LTgyZTQtZmJhZGQ1NDFjNjRmIiwiZXhwIjoxNzE1OTA4ODUyfQ.R7RIa6WGbeL2JVJFn463x1Q3ZAhsu-tJ9kIBzXDBZOk\",\n        \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI0MDQwMzZmLTZhNWQtNDBjOS04MmU0LWZiYWRkNTQxYzY0ZiIsImV4cCI6MTcxNjUwNjQ1Mn0.0E5sBLIksleGq7lWZcWpOAtLbgyTgwcoP9XdIlX3Rr4\"\n    }\n}"
+						},
+						{
+							"name": "no file",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "fullname",
+											"value": "John Doe Pasaribu",
+											"type": "text"
+										},
+										{
+											"key": "gender",
+											"value": "male",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "johndoe",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "johndoe@example.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/GitHub.png",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:21:24 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "89"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"Failed to get file\",\n    \"data\": \"http: no such file\"\n}"
+						},
+						{
+							"name": "invalid request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "fullname",
+											"value": "John Doe Pasaribu",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "gender",
+											"value": "male",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "username",
+											"value": "johndoe",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "johndoe@example.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/GitHub.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:21:45 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "151"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field FullName is required\",\n        \"Field Gender is required\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "update profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullname",
+									"value": "Alfara Update",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "nafidinara",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "nafidinara@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"profile"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "fullname",
+											"value": "Alfara Update",
+											"type": "text"
+										},
+										{
+											"key": "gender",
+											"value": "male",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "nafidinara",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "nafidinara@gmail.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/profile",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:48:25 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "322"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success update user\",\n    \"data\": {\n        \"id\": \"e55e8b51-ce2b-4048-849a-660309a3d40e\",\n        \"username\": \"nafidinara\",\n        \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902820/redoocehub/hq2vc10etsmwrzm4nhua.png\",\n        \"email\": \"nafidinara@gmail.com\",\n        \"fullname\": \"Alfara Update\",\n        \"Gender\": \"male\"\n    }\n}"
+						},
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "fullname",
+											"value": "Alfara Update",
+											"type": "text"
+										},
+										{
+											"key": "gender",
+											"value": "male",
+											"type": "text"
+										},
+										{
+											"key": "username",
+											"value": "nafidinara",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "nafidinara@gmail.com",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/profile",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"profile"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:48:47 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "121"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field Email is required\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "dashboard",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/dashboard",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dashboard"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/users/dashboard",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"dashboard"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:47:25 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "259"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get dashboard data\",\n    \"data\": {\n        \"organization_count\": 2,\n        \"address_count\": 3,\n        \"collaboration_send\": {\n            \"accepted\": 1,\n            \"rejected\": 0,\n            \"waiting\": 1,\n            \"running\": 0\n        },\n        \"collaboration_receive\": {\n            \"accepted\": 1,\n            \"rejected\": 0,\n            \"waiting\": 1,\n            \"running\": 0\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "chatbot",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\":\"saya memiliki perusahaan kapal, kira kira kolaborasi seperti apa yang bisa dilakukan dengan organisasi zero waste?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/chatbot",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chatbot"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "sucess",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"message\":\"saya memiliki perusahaan kapal, kira kira kolaborasi seperti apa yang bisa dilakukan dengan organisasi zero waste?\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/chatbot",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"chatbot"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 15 May 2024 17:18:53 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1597"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"OK\",\n    \"message\": \"Message sent successfully\",\n    \"data\": {\n        \"message\": \"saya memiliki perusahaan kapal, kira kira kolaborasi seperti apa yang bisa dilakukan dengan organisasi zero waste?\",\n        \"response\": \"Tentu, sebagai perusahaan kapal, terdapat beberapa kolaborasi yang dapat dilakukan dengan organisasi zero waste untuk mendukung upaya pengelolaan sampah dan pembuangan yang berkelanjutan. Berikut beberapa contoh kolaborasi yang bisa dilakukan:\\n\\n1. **Pengelolaan Sampah di Kapal**: Bekerjasama dengan organisasi zero waste untuk mengembangkan program pengelolaan sampah di kapal yang efektif. Hal ini meliputi pemisahan dan daur ulang sampah, serta pengurangan sampah plastik.\\n\\n2. **Edukasi dan Pelatihan**: Mengadakan sesi edukasi dan pelatihan bersama dengan organisasi zero waste untuk mengedukasi kru kapal dan penumpang tentang pentingnya pengelolaan sampah yang bertanggung jawab.\\n\\n3. **Penggunaan Produk Ramah Lingkungan**: Kolaborasi dalam menggunakan produk-produk ramah lingkungan, seperti penggunaan kemasan yang dapat didaur ulang atau menggunakan produk-produk yang diproduksi dengan prinsip zero waste.\\n\\n4. **Program Sosial**: Bersama-sama mengembangkan program sosial yang berfokus pada pengurangan sampah di wilayah perairan atau pesisir, seperti kegiatan pembersihan pantai atau kampanye anti-sampah plastik.\\n\\nDengan bekerja sama dengan organisasi zero waste, perusahaan kapal dapat berkontribusi untuk menciptakan lingkungan yang lebih bersih dan berkelanjutan, serta memberikan dampak positif bagi masyarakat dan lingkungan di sekitar wilayah kapal beroperasi.\"\n    }\n}"
+						},
+						{
+							"name": "invalid api key",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"message\":\"saya memiliki perusahaan kapal, kira kira kolaborasi seperti apa yang bisa dilakukan dengan organisasi zero waste?\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/chatbot",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"chatbot"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:45:47 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "287"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Internal Server Error\",\n    \"message\": \"Failed to send message chatbot\",\n    \"data\": \"error, status code: 401, message: Incorrect API key provided: sk-proj-********************************************d6lL. You can find your API key at https://platform.openai.com/account/api-keys.\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Organizations",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "PlanetCare Alliance",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "company",
+									"type": "text"
+								},
+								{
+									"key": "founding_date",
+									"value": "2024-05-23",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "info@planetcarealliance.org",
+									"type": "text"
+								},
+								{
+									"key": "website",
+									"value": "https://planetcarealliance.org",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "+33123456789",
+									"type": "text"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": "/Users/nafidinara/Downloads/pngwing.com (3).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/organizations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organizations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "PlanetCare Alliance",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "company",
+											"type": "text"
+										},
+										{
+											"key": "founding_date",
+											"value": "2024-05-23",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "info@planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "website",
+											"value": "https://planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+33123456789",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/pngwing.com (3).png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8080/api/v1/organizations",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"organizations"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:48:38 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "979"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Created\",\n    \"message\": \"Success create organization\",\n    \"data\": {\n        \"id\": \"9aaea11f-9cf8-4edc-86ec-86f738d72174\",\n        \"name\": \"PlanetCare Alliance\",\n        \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n        \"type\": \"company\",\n        \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903317/redoocehub/x8srk97styhxtzkgvz8k.png\",\n        \"founding_date\": \"2024-05-23T00:00:00Z\",\n        \"email\": \"info@planetcarealliance.org\",\n        \"website\": \"https://planetcarealliance.org\",\n        \"phone\": \"+33123456789\",\n        \"created_at\": \"2024-05-17T06:48:38.469+07:00\",\n        \"updated_at\": \"2024-05-17T06:48:38.469+07:00\",\n        \"deleted_at\": null,\n        \"owner\": {\n            \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"username\": \"johndoe\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n            \"email\": \"johndoe@example.com\",\n            \"fullname\": \"John Doe Pasaribu\",\n            \"Gender\": \"male\"\n        },\n        \"addresses\": null\n    }\n}"
+						},
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "PlanetCare Alliance",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "company",
+											"type": "text"
+										},
+										{
+											"key": "founding_date",
+											"value": "2024-05-23",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "info@planetcarealliance.org",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "website",
+											"value": "https://planetcarealliance.org",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "phone",
+											"value": "+33123456789",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/pngwing.com (3).png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:49:14 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "170"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"make sure you follow the input requirements\",\n    \"message\": \"Error while binding your request\",\n    \"data\": [\n        \"Field Email is required\",\n        \"Field Website is required\"\n    ]\n}"
+						},
+						{
+							"name": "invalid format",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "PlanetCare Alliance",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "company",
+											"type": "text"
+										},
+										{
+											"key": "founding_date",
+											"value": "2024-05-90",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "info@planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "website",
+											"value": "https://planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+33123456789",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/pngwing.com (3).png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:49:43 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "190"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"make sure you follow the input requirements\",\n    \"message\": \"Error while binding your request\",\n    \"data\": [\n        \"Field FoundingDate must be a valid date format, it should be YYYY-MM-DD\"\n    ]\n}"
+						},
+						{
+							"name": "no file",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "PlanetCare Alliance",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "company",
+											"type": "text"
+										},
+										{
+											"key": "founding_date",
+											"value": "2024-05-10",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "info@planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "website",
+											"value": "https://planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+33123456789",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/pngwing.com (3).png",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:50:43 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "89"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"Failed to get file\",\n    \"data\": \"http: no such file\"\n}"
+						},
+						{
+							"name": "wrong type",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Badan Lingkungan Indonesia",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "institutionwrong",
+											"type": "text"
+										},
+										{
+											"key": "founding_date",
+											"value": "2024-05-10",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "info@planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "website",
+											"value": "https://planetcarealliance.org",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+33123456789",
+											"type": "text"
+										},
+										{
+											"key": "profile_image",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/pngwing.com (3).png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:55:56 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "200"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"make sure you follow the input requirements\",\n    \"message\": \"Error while binding your request\",\n    \"data\": [\n        \"Field Type must be one of the following: community company institution ngo agency\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/organizations/96bafdbb-7c09-4372-a559-ec484269ec27",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organizations",
+								"96bafdbb-7c09-4372-a559-ec484269ec27"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8080/api/v1/organizations/96bafdbb-7c09-4372-a559-ec484269ec27",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"96bafdbb-7c09-4372-a559-ec484269ec27"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:51:57 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "97"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to get all organization\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/9aaea11f-9cf8-4edc-86ec-86f738d72174",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"9aaea11f-9cf8-4edc-86ec-86f738d72174"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:52:09 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1094"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get organization\",\n    \"data\": {\n        \"id\": \"9aaea11f-9cf8-4edc-86ec-86f738d72174\",\n        \"name\": \"PlanetCare Alliance\",\n        \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n        \"type\": \"company\",\n        \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903317/redoocehub/x8srk97styhxtzkgvz8k.png\",\n        \"founding_date\": \"2024-05-23T07:00:00+07:00\",\n        \"email\": \"info@planetcarealliance.org\",\n        \"website\": \"https://planetcarealliance.org\",\n        \"phone\": \"+33123456789\",\n        \"created_at\": \"2024-05-17T06:48:38.469+07:00\",\n        \"updated_at\": \"2024-05-17T06:48:38.469+07:00\",\n        \"deleted_at\": null,\n        \"owner\": {\n            \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"username\": \"johndoe\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n            \"email\": \"johndoe@example.com\",\n            \"fullname\": \"John Doe Pasaribu\",\n            \"Gender\": \"male\"\n        },\n        \"addresses\": [\n            {\n                \"country\": \"United States\",\n                \"state\": \"California\",\n                \"city\": \"San Francisco\",\n                \"postal_code\": \"94103\",\n                \"street\": \"123 Main Street\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/organizations/eeca2112-dfba-4146-91fd-47fda3cbca01",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organizations",
+								"eeca2112-dfba-4146-91fd-47fda3cbca01"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8080/api/v1/organizations/eeca2112-dfba-4146-91fd-47fda3cbca01",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"eeca2112-dfba-4146-91fd-47fda3cbca01"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:05:01 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "96"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to delete organization\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/1bd14ec0-f9fc-4346-b380-8f54159e3927",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"1bd14ec0-f9fc-4346-b380-8f54159e3927"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:05:28 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "73"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success delete organization\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"PlanetCare Alliance\",\n    \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n    \"type\": \"company\",\n    \"profile_image\": \"https://example.com/planetcare_logo.png\",\n    \"email\": \"info@planetcarealliance.org\",\n    \"website\": \"https://planetcarealliance.org\",\n    \"phone\": \"+33123456789\",\n    \"founding_date\": \"2024-05-23\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/organizations/96bafdbb-7c09-4372-a559-ec484269ec27",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organizations",
+								"96bafdbb-7c09-4372-a559-ec484269ec27"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"PlanetCare Alliance\",\n    \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n    \"type\": \"company\",\n    \"profile_image\": \"https://example.com/planetcare_logo.png\",\n    \"email\": \"info@planetcarealliance.org\",\n    \"website\": \"https://planetcarealliance.org\",\n    \"phone\": \"+33123456789\",\n    \"founding_date\": \"2024-05-23\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8080/api/v1/organizations/96bafdbb-7c09-4372-a559-ec484269ec27",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"96bafdbb-7c09-4372-a559-ec484269ec27"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 23:58:51 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "93"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to get organization\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"PlanetCare Alliance Update\",\n    \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n    \"type\": \"company\",\n    \"profile_image\": \"https://example.com/planetcare_logo.png\",\n    \"email\": \"info@planetcarealliance.org\",\n    \"phone\": \"+33123456789\",\n    \"founding_date\": \"2024-05-23\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/46605599-6e2d-403b-b6e8-4ba725df7094",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"46605599-6e2d-403b-b6e8-4ba725df7094"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:02:05 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "123"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field Website is required\"\n    ]\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"PlanetCare Alliance Update\",\n    \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n    \"type\": \"company\",\n    \"profile_image\": \"https://example.com/planetcare_logo.png\",\n    \"email\": \"info@planetcarealliance.org\",\n    \"website\": \"https://planetcarealliance.org\",\n    \"phone\": \"+33123456789\",\n    \"founding_date\": \"2024-05-23\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/46605599-6e2d-403b-b6e8-4ba725df7094",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"46605599-6e2d-403b-b6e8-4ba725df7094"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:02:24 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "699"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success update organization\",\n    \"data\": {\n        \"id\": \"46605599-6e2d-403b-b6e8-4ba725df7094\",\n        \"name\": \"PlanetCare Alliance Update\",\n        \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n        \"type\": \"company\",\n        \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n        \"founding_date\": \"2024-05-10T07:00:00+07:00\",\n        \"email\": \"info@planetcarealliance.org\",\n        \"website\": \"https://planetcarealliance.org\",\n        \"phone\": \"+33123456789\",\n        \"created_at\": \"2024-05-17T06:56:15.248+07:00\",\n        \"updated_at\": \"2024-05-17T07:02:24.632+07:00\",\n        \"deleted_at\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/organizations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organizations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/organizations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:06:09 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1326"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get all organization\",\n    \"data\": [\n        {\n            \"id\": \"46605599-6e2d-403b-b6e8-4ba725df7094\",\n            \"name\": \"PlanetCare Alliance Update\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n            \"founding_date\": \"2024-05-10T07:00:00+07:00\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\",\n            \"created_at\": \"2024-05-17T06:56:15.248+07:00\",\n            \"updated_at\": \"2024-05-17T07:02:24.632+07:00\",\n            \"deleted_at\": null\n        },\n        {\n            \"id\": \"9aaea11f-9cf8-4edc-86ec-86f738d72174\",\n            \"name\": \"PlanetCare Alliance\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903317/redoocehub/x8srk97styhxtzkgvz8k.png\",\n            \"founding_date\": \"2024-05-23T07:00:00+07:00\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\",\n            \"created_at\": \"2024-05-17T06:48:38.469+07:00\",\n            \"updated_at\": \"2024-05-17T06:48:38.469+07:00\",\n            \"deleted_at\": null\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get all by user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/users/organizations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"organizations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/users/organizations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"organizations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:07:37 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1330"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get organization by user\",\n    \"data\": [\n        {\n            \"id\": \"46605599-6e2d-403b-b6e8-4ba725df7094\",\n            \"name\": \"PlanetCare Alliance Update\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n            \"founding_date\": \"2024-05-10T07:00:00+07:00\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\",\n            \"created_at\": \"2024-05-17T06:56:15.248+07:00\",\n            \"updated_at\": \"2024-05-17T07:02:24.632+07:00\",\n            \"deleted_at\": null\n        },\n        {\n            \"id\": \"9aaea11f-9cf8-4edc-86ec-86f738d72174\",\n            \"name\": \"PlanetCare Alliance\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903317/redoocehub/x8srk97styhxtzkgvz8k.png\",\n            \"founding_date\": \"2024-05-23T07:00:00+07:00\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\",\n            \"created_at\": \"2024-05-17T06:48:38.469+07:00\",\n            \"updated_at\": \"2024-05-17T06:48:38.469+07:00\",\n            \"deleted_at\": null\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Addresses",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/addresses?organization_id=1c62ed5f-fc9e-4cdb-b79e-c2616760eb90",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"addresses"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "b5722151-448e-40e9-bc23-ac9bbd4ff377",
+									"disabled": true
+								},
+								{
+									"key": "organization_id",
+									"value": "1c62ed5f-fc9e-4cdb-b79e-c2616760eb90"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success get by user id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/addresses?user_id=a4918f20-4872-4d5d-8aa5-6b2890815b85",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"addresses"
+									],
+									"query": [
+										{
+											"key": "user_id",
+											"value": "a4918f20-4872-4d5d-8aa5-6b2890815b85"
+										},
+										{
+											"key": "organization_id",
+											"value": "1c62ed5f-fc9e-4cdb-b79e-c2616760eb90",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:52:23 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "835"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get all address by organization_id or user_id\",\n    \"data\": [\n        {\n            \"ID\": \"6f3193e8-3988-4515-bfc9-53ae4fe36a78\",\n            \"user_id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"organization_id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Country\": \"Indonesia\",\n            \"State\": \"Jawa Barat\",\n            \"City\": \"Bandung\",\n            \"PostalCode\": \"94103\",\n            \"Street\": \"jl bunga bawar\",\n            \"CreatedAt\": \"2024-05-17T07:50:21.777+07:00\",\n            \"UpdatedAt\": \"2024-05-17T07:50:21.777+07:00\",\n            \"DeletedAt\": null\n        },\n        {\n            \"ID\": \"d94a9acb-df94-430b-b930-b8a8b629c9f9\",\n            \"user_id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"organization_id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Country\": \"United States\",\n            \"State\": \"California\",\n            \"City\": \"San Francisco\",\n            \"PostalCode\": \"94103\",\n            \"Street\": \"123 Main Street\",\n            \"CreatedAt\": \"2024-05-17T07:34:14.495+07:00\",\n            \"UpdatedAt\": \"2024-05-17T07:34:14.495+07:00\",\n            \"DeletedAt\": null\n        }\n    ]\n}"
+						},
+						{
+							"name": "success get by organization id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/addresses?organization_id=1c62ed5f-fc9e-4cdb-b79e-c2616760eb90",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"addresses"
+									],
+									"query": [
+										{
+											"key": "user_id",
+											"value": "a4918f20-4872-4d5d-8aa5-6b2890815b85",
+											"disabled": true
+										},
+										{
+											"key": "organization_id",
+											"value": "1c62ed5f-fc9e-4cdb-b79e-c2616760eb90"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:53:19 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "471"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get all address by organization_id or user_id\",\n    \"data\": [\n        {\n            \"ID\": \"f45b76a0-0dba-420f-87b1-ed121cc09aaf\",\n            \"user_id\": \"00000000-0000-0000-0000-000000000000\",\n            \"organization_id\": \"1c62ed5f-fc9e-4cdb-b79e-c2616760eb90\",\n            \"Country\": \"United States\",\n            \"State\": \"California\",\n            \"City\": \"San Francisco\",\n            \"PostalCode\": \"94103\",\n            \"Street\": \"123 Main Street\",\n            \"CreatedAt\": \"2024-05-17T07:38:21.751+07:00\",\n            \"UpdatedAt\": \"2024-05-17T07:38:21.751+07:00\",\n            \"DeletedAt\": null\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "create user address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"country\": \"Indonesia\",\n    \"state\": \"Jawa Barat\",\n    \"city\": \"Bandung\",\n    \"postal_code\": \"94103\",\n    \"street\": \"jl bunga bawar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/address",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"address"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"country\": \"United States\",\n    \"state\": \"California\",\n    \"city\": \"San Francisco\",\n    \"postal_code\": \"94103\",\n    \"street\": \"123 Main Street\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/address",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"address"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:34:14 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "443"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success created new address\",\n    \"data\": {\n        \"ID\": \"d94a9acb-df94-430b-b930-b8a8b629c9f9\",\n        \"user_id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n        \"organization_id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Country\": \"United States\",\n        \"State\": \"California\",\n        \"City\": \"San Francisco\",\n        \"PostalCode\": \"94103\",\n        \"Street\": \"123 Main Street\",\n        \"CreatedAt\": \"2024-05-17T07:34:14.495+07:00\",\n        \"UpdatedAt\": \"2024-05-17T07:34:14.495+07:00\",\n        \"DeletedAt\": null\n    }\n}"
+						},
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"country\": \"United States\",\n    \"state\": \"California\",\n    \"city\": \"San Francisco\",\n    \"postal_code\": \"94103\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/users/address",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"address"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:37:12 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "122"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field Street is required\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "create organization address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"organization_id\":\"9aaea11f-9cf8-4edc-86ec-86f738d72174\",\n    \"country\": \"United States\",\n    \"state\": \"California\",\n    \"city\": \"San Francisco\",\n    \"postal_code\": \"94103\",\n    \"street\": \"123 Main Street\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/organizations/address",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organizations",
+								"address"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organization_id\":\"1c62ed5f-fc9e-4cdb-b79e-c2616760eb90\",\n    \"country\": \"United States\",\n    \"state\": \"California\",\n    \"city\": \"San Francisco\",\n    \"postal_code\": \"94103\",\n    \"street\": \"123 Main Street\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/address",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"address"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:38:21 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "443"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success created new address\",\n    \"data\": {\n        \"ID\": \"f45b76a0-0dba-420f-87b1-ed121cc09aaf\",\n        \"user_id\": \"00000000-0000-0000-0000-000000000000\",\n        \"organization_id\": \"1c62ed5f-fc9e-4cdb-b79e-c2616760eb90\",\n        \"Country\": \"United States\",\n        \"State\": \"California\",\n        \"City\": \"San Francisco\",\n        \"PostalCode\": \"94103\",\n        \"Street\": \"123 Main Street\",\n        \"CreatedAt\": \"2024-05-17T07:38:21.751+07:00\",\n        \"UpdatedAt\": \"2024-05-17T07:38:21.751+07:00\",\n        \"DeletedAt\": null\n    }\n}"
+						},
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organization_id\":\"1c62ed5f-fc9e-4cdb-b79e-c2616760eb90\",\n    \"country\": \"United States\",\n    \"state\": \"California\",\n    \"city\": \"San Francisco\",\n    \"postal_code\": \"94103\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/address",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"address"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:39:18 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "122"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field Street is required\"\n    ]\n}"
+						},
+						{
+							"name": "organization not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organization_id\":\"1c62ed5f-fc9e-4cdb-b79e-c2616760eb91\",\n    \"country\": \"United States\",\n    \"state\": \"California\",\n    \"city\": \"San Francisco\",\n    \"postal_code\": \"94103\",\n    \"street\": \"123 Main Street\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/organizations/address",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"organizations",
+										"address"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:47:11 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "93"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to get organization\",\n    \"data\": \"record not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "delete address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/addresses/3dead626-99a3-4fd4-93eb-500eae2f7141",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"addresses",
+								"3dead626-99a3-4fd4-93eb-500eae2f7141"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/addresses/3dead626-99a3-4fd4-93eb-500eae2f7141",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"addresses",
+										"3dead626-99a3-4fd4-93eb-500eae2f7141"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:54:37 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "91"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to delete address\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/addresses/c99ddf77-866d-4661-a35f-fed7f23b70bb",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"addresses",
+										"c99ddf77-866d-4661-a35f-fed7f23b70bb"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 00:54:56 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "68"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success delete address\",\n    \"data\": null\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Collaborations",
+			"item": [
+				{
+					"name": "send proposal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "organization_id",
+									"value": "653e48b8-9fda-4c3e-a322-ef0e08038d40",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "waiting",
+									"type": "text"
+								},
+								{
+									"key": "subject",
+									"value": "Collaboration Proposal",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "Please review the collaboration proposal attached.",
+									"type": "text"
+								},
+								{
+									"key": "attachment",
+									"type": "file",
+									"src": "/Users/nafidinara/Downloads/Untitled Diagram.drawio.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/collaborations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collaborations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "bad request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "organization_id",
+											"value": "653e48b8-9fda-4c3e-a322-ef0e08038d40",
+											"type": "text"
+										},
+										{
+											"key": "status",
+											"value": "waiting",
+											"type": "text"
+										},
+										{
+											"key": "subject",
+											"value": "Collaboration Proposal",
+											"type": "text"
+										},
+										{
+											"key": "content",
+											"value": "Please review the collaboration proposal attached.",
+											"type": "text"
+										},
+										{
+											"key": "attachment",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:24:14 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "89"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"Failed to get file\",\n    \"data\": \"http: no such file\"\n}"
+						},
+						{
+							"name": "organization not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "organization_id",
+											"value": "653e48b8-9fda-4c3e-a322-ef0e08038d40",
+											"type": "text"
+										},
+										{
+											"key": "status",
+											"value": "waiting",
+											"type": "text"
+										},
+										{
+											"key": "subject",
+											"value": "Collaboration Proposal",
+											"type": "text"
+										},
+										{
+											"key": "content",
+											"value": "Please review the collaboration proposal attached.",
+											"type": "text"
+										},
+										{
+											"key": "attachment",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/Cover Letter for Nethermind Internship 2024.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:29:43 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "93"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to get organization\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "organization_id",
+											"value": "46605599-6e2d-403b-b6e8-4ba725df7094",
+											"type": "text"
+										},
+										{
+											"key": "status",
+											"value": "waiting",
+											"type": "text"
+										},
+										{
+											"key": "subject",
+											"value": "Collaboration Proposal",
+											"type": "text"
+										},
+										{
+											"key": "content",
+											"value": "Please review the collaboration proposal attached.",
+											"type": "text"
+										},
+										{
+											"key": "attachment",
+											"type": "file",
+											"src": "/Users/nafidinara/Downloads/Cover Letter for Nethermind Internship 2024.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:31:43 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1128"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Created\",\n    \"message\": \"Success created new collaboration\",\n    \"data\": {\n        \"id\": \"69c2b19f-487e-4d83-bb5d-c697654a3427\",\n        \"user\": {\n            \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"username\": \"johndoe\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n            \"email\": \"johndoe@example.com\",\n            \"fullname\": \"John Doe Pasaribu\",\n            \"Gender\": \"male\"\n        },\n        \"organization\": {\n            \"name\": \"PlanetCare Alliance Update\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n            \"founding_date\": \"0001-01-01T00:00:00Z\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\"\n        },\n        \"proposal\": {\n            \"subject\": \"Collaboration Proposal\",\n            \"content\": \"Please review the collaboration proposal attached.\",\n            \"attachment\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715916699/redoocehub/dp3blr0cqfpcjvfzsrco.pdf\"\n        },\n        \"status\": \"waiting\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/collaborations/69c2b19f-487e-4d83-bb5d-c697654a3427",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collaborations",
+								"69c2b19f-487e-4d83-bb5d-c697654a3427"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations/21c4169e-b87a-4bb2-bb69-137b90c96ceb",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations",
+										"21c4169e-b87a-4bb2-bb69-137b90c96ceb"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:32:57 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "94"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to get collaboration\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations/69c2b19f-487e-4d83-bb5d-c697654a3427",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations",
+										"69c2b19f-487e-4d83-bb5d-c697654a3427"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:33:37 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1115"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get collaboration\",\n    \"data\": {\n        \"id\": \"69c2b19f-487e-4d83-bb5d-c697654a3427\",\n        \"user\": {\n            \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"username\": \"johndoe\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n            \"email\": \"johndoe@example.com\",\n            \"fullname\": \"John Doe Pasaribu\",\n            \"Gender\": \"male\"\n        },\n        \"organization\": {\n            \"name\": \"PlanetCare Alliance Update\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n            \"founding_date\": \"0001-01-01T00:00:00Z\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\"\n        },\n        \"proposal\": {\n            \"subject\": \"Collaboration Proposal\",\n            \"content\": \"Please review the collaboration proposal attached.\",\n            \"attachment\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715916699/redoocehub/dp3blr0cqfpcjvfzsrco.pdf\"\n        },\n        \"status\": \"waiting\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "update status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "status",
+									"value": "accepted",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/collaborations/69c2b19f-487e-4d83-bb5d-c697654a3427",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collaborations",
+								"69c2b19f-487e-4d83-bb5d-c697654a3427"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "wrong status",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "status",
+											"value": "waitingwrong",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations/ac3e9eea-65c1-463f-9981-19ca15ccf077",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations",
+										"ac3e9eea-65c1-463f-9981-19ca15ccf077"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:34:36 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "174"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Bad Request\",\n    \"message\": \"make sure you follow the input requirements\",\n    \"data\": [\n        \"Field Status must be one of the following: accepted rejected waiting running\"\n    ]\n}"
+						},
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "status",
+											"value": "accepted",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations/ac3e9eea-65c1-463f-9981-19ca15ccf077",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations",
+										"ac3e9eea-65c1-463f-9981-19ca15ccf077"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:35:00 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "109"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Internal Server Error\",\n    \"message\": \"Failed to update collaboration\",\n    \"data\": \"record not found\"\n}"
+						},
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "status",
+											"value": "accepted",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations/69c2b19f-487e-4d83-bb5d-c697654a3427",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations",
+										"69c2b19f-487e-4d83-bb5d-c697654a3427"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:35:47 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1119"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success update collaboration\",\n    \"data\": {\n        \"id\": \"69c2b19f-487e-4d83-bb5d-c697654a3427\",\n        \"user\": {\n            \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n            \"username\": \"johndoe\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n            \"email\": \"johndoe@example.com\",\n            \"fullname\": \"John Doe Pasaribu\",\n            \"Gender\": \"male\"\n        },\n        \"organization\": {\n            \"name\": \"PlanetCare Alliance Update\",\n            \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n            \"type\": \"company\",\n            \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n            \"founding_date\": \"0001-01-01T00:00:00Z\",\n            \"email\": \"info@planetcarealliance.org\",\n            \"website\": \"https://planetcarealliance.org\",\n            \"phone\": \"+33123456789\"\n        },\n        \"proposal\": {\n            \"subject\": \"Collaboration Proposal\",\n            \"content\": \"Please review the collaboration proposal attached.\",\n            \"attachment\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715916699/redoocehub/dp3blr0cqfpcjvfzsrco.pdf\"\n        },\n        \"status\": \"accepted\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "get all by user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/collaborations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collaborations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:36:24 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1122"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Ok\",\n    \"message\": \"Success get all collaboration\",\n    \"data\": [\n        {\n            \"id\": \"69c2b19f-487e-4d83-bb5d-c697654a3427\",\n            \"user\": {\n                \"id\": \"a4918f20-4872-4d5d-8aa5-6b2890815b85\",\n                \"username\": \"johndoe\",\n                \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715902741/redoocehub/ys9n4tpe51nnbbigiqlj.png\",\n                \"email\": \"johndoe@example.com\",\n                \"fullname\": \"John Doe Pasaribu\",\n                \"Gender\": \"male\"\n            },\n            \"organization\": {\n                \"name\": \"PlanetCare Alliance Update\",\n                \"description\": \"Kami adalah jaringan organisasi yang bekerja sama untuk menjaga planet kita dengan mengurangi limbah plastik dan mempromosikan keberlanjutan.\",\n                \"type\": \"company\",\n                \"profile_image\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715903774/redoocehub/k4o118f4f2mwicp2f6sy.png\",\n                \"founding_date\": \"0001-01-01T00:00:00Z\",\n                \"email\": \"info@planetcarealliance.org\",\n                \"website\": \"https://planetcarealliance.org\",\n                \"phone\": \"+33123456789\"\n            },\n            \"proposal\": {\n                \"subject\": \"Collaboration Proposal\",\n                \"content\": \"Please review the collaboration proposal attached.\",\n                \"attachment\": \"https://res.cloudinary.com/alta-minpro/image/upload/v1715916699/redoocehub/dp3blr0cqfpcjvfzsrco.pdf\"\n            },\n            \"status\": \"accepted\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/collaborations/ee96f8f0-ef25-4573-8de1-dd2b634af829",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"collaborations",
+								"ee96f8f0-ef25-4573-8de1-dd2b634af829"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "not found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/v1/collaborations/ac3e9eea-65c1-463f-9981-19ca15ccf077",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"collaborations",
+										"ac3e9eea-65c1-463f-9981-19ca15ccf077"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 17 May 2024 03:40:29 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "97"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status_code\": \"Not Found\",\n    \"message\": \"Failed to delete collaboration\",\n    \"data\": \"record not found\"\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

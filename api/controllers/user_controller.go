@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -12,6 +11,7 @@ import (
 	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
+	"redoocehub/internal/constant"
 	"redoocehub/internal/validation"
 	"redoocehub/usecases"
 )
@@ -23,65 +23,36 @@ type UserController struct {
 }
 
 func (uc *UserController) Register(c echo.Context) error {
-
 	var request dto.RegisterRequest
 
 	formHeader, errFile := c.FormFile("profile_image")
 
 	if errFile != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    errFile.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrFailedGetFile, errFile.Error())
 	}
 
 	formFile, errFile := formHeader.Open()
 
 	if errFile != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    errFile.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrFailedOpenFile, errFile.Error())
 	}
 
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
-	_, err = uc.UserUsecase.GetUserByEmail(c.Request().Context(), request.Email)
-
-	if err == nil {
-		return c.JSON(http.StatusConflict, infra.ErrorResponse{
-			StatusCode: "Conflict",
-			Message:    "User already exists",
-			Data:       nil,
-		})
+	if _, err := uc.UserUsecase.GetUserByEmail(c.Request().Context(), request.Email); err == nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.Conflict, constant.ErrEmailAlreadyExist, err)
 	}
 
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGeneratePassword, err.Error())
 	}
 
 	uploadUrl, err := usecases.NewMediaUpload().FileUpload(dto.File{File: formFile}, entities.CloudinaryEnvSetting{
@@ -92,14 +63,8 @@ func (uc *UserController) Register(c echo.Context) error {
 	})
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrFailedUploadFile, err.Error())
 	}
-
-	fmt.Println("uploadUrl: ", uploadUrl)
 
 	request.Password = string(encryptedPassword)
 	request.ProfileImage = uploadUrl
@@ -107,123 +72,70 @@ func (uc *UserController) Register(c echo.Context) error {
 	user, err := uc.UserUsecase.Create(c.Request().Context(), &request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrRegisterUser, err.Error())
 	}
 
 	accessToken, err := uc.UserUsecase.CreateAccessToken(user, uc.Env.ACCESS_TOKEN_SECRET, uc.Env.ACCESS_TOKEN_EXPIRY_HOUR)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrAccessToken, err.Error())
 	}
 
 	refreshToken, err := uc.UserUsecase.CreateRefreshToken(user, uc.Env.REFRESH_TOKEN_SECRET, uc.Env.REFRESH_TOKEN_EXPIRY_HOUR)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrRefreshToken, err.Error())
 	}
 
 	user.RefreshToken = refreshToken
 
 	response := entities.ToRegisterResponseUser(user, accessToken)
 
-	return c.JSON(http.StatusCreated, infra.SuccessResponse{
-		StatusCode: "Created",
-		Message:    "User created successfully",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusCreated, constant.SuccessCreated, constant.SuccessRegisterUser, response)
 }
 
 func (uc *UserController) Login(c echo.Context) error {
 	var request dto.LoginRequest
 
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
 	user, err := uc.UserUsecase.GetUserByEmail(c.Request().Context(), request.Email)
 
 	if err != nil {
-		return c.JSON(http.StatusNotFound, infra.ErrorResponse{
-			StatusCode: "Not Found",
-			Message:    "User not found with the given email",
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusUnauthorized, constant.ErrUnauthorized, constant.ErrNotFoundUser, err)
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)) != nil {
-		return c.JSON(http.StatusUnauthorized, infra.ErrorResponse{
-			StatusCode: "Unauthorized",
-			Message:    "Invalid credentials",
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusUnauthorized, constant.ErrUnauthorized, constant.ErrInvalidCredentials, err)
 	}
 
 	accessToken, err := uc.UserUsecase.CreateAccessToken(&user, uc.Env.ACCESS_TOKEN_SECRET, uc.Env.ACCESS_TOKEN_EXPIRY_HOUR)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrAccessToken, err.Error())
 	}
 
 	refreshToken, err := uc.UserUsecase.CreateRefreshToken(&user, uc.Env.REFRESH_TOKEN_SECRET, uc.Env.REFRESH_TOKEN_EXPIRY_HOUR)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrRefreshToken, err.Error())
 	}
 
-	loginUser := entities.EntityToDtoUser(&user)
+	loginResponse := entities.ToLoginResponseUser(entities.EntityToDtoUser(&user), accessToken, refreshToken)
 
-	loginResponse := entities.ToLoginResponseUser(loginUser, accessToken, refreshToken)
-
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Login successful",
-		Data:       loginResponse,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessLoginUser, loginResponse)
 }
 
 func (uc *UserController) Profile(c echo.Context) error {
-	userID := c.Get("x-user-id").(string)
-
-	profile, err := uc.UserUsecase.GetProfileByID(c.Request().Context(), userID)
+	profile, err := uc.UserUsecase.GetProfileByID(c.Request().Context(), c.Get("x-user-id").(string))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetProfile, err.Error())
 	}
 
 	response := entities.ToProfileResponseUser(profile)
@@ -238,139 +150,75 @@ func (uc *UserController) Profile(c echo.Context) error {
 func (uc *UserController) RefreshToken(c echo.Context) error {
 	var request dto.RefreshTokenRequest
 
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	user, err := uc.UserUsecase.GetUserByID(c.Request().Context(), request.RefreshToken)
 
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, infra.ErrorResponse{
-			StatusCode: "Unauthorized",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusUnauthorized, constant.ErrUnauthorized, constant.ErrNotFoundUser, err)
 	}
 
 	accessToken, err := uc.UserUsecase.CreateAccessToken(&user, uc.Env.ACCESS_TOKEN_SECRET, uc.Env.ACCESS_TOKEN_EXPIRY_HOUR)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrAccessToken, err.Error())
 	}
 
 	refreshToken, err := uc.UserUsecase.CreateRefreshToken(&user, uc.Env.REFRESH_TOKEN_SECRET, uc.Env.REFRESH_TOKEN_EXPIRY_HOUR)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrRefreshToken, err.Error())
 	}
 
 	response := entities.ToRefreshTokenResponseUser(accessToken, refreshToken)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Token refreshed successfully",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessRefreshToken, response)
 }
 
 func (uc *UserController) Update(c echo.Context) error {
 	var request dto.UpdateUserRequest
 
-	userID := c.Get("x-user-id").(string)
-
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
-	userId := uuid.MustParse(userID)
-
-	updatedUser, err := uc.UserUsecase.Update(userId, &request)
+	updatedUser, err := uc.UserUsecase.Update(uuid.MustParse(c.Get("x-user-id").(string)), &request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrUpdateUser, err.Error())
 	}
 
 	response := entities.EntityToDtoUser(updatedUser)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "User updated successfully",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessUpdateUser, response)
 }
 
 func (uc *UserController) Dashboard(c echo.Context) error {
-	userID := c.Get("x-user-id").(string)
-
-	dashboardData, err := uc.UserUsecase.GetDashboardData(userID)
+	dashboardData, err := uc.UserUsecase.GetDashboardData(c.Get("x-user-id").(string))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetDashboardData, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Dashboard data retrieved successfully",
-		Data:       dashboardData,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetDashboardData, dashboardData)
 }
 
 func (uc *UserController) SendMessageChatbot(c echo.Context) error {
 
 	var request dto.ChatbotRequest
 
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
 	chatbotConfig := entities.ChatbotConfig{
@@ -380,21 +228,13 @@ func (uc *UserController) SendMessageChatbot(c echo.Context) error {
 	reply, err := uc.ChatbotUsecase.SendMessage(chatbotConfig, request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrSendMessageChatbot, err.Error())
 	}
 
 	response := dto.ChatbotResponse{
-		Message:   request.Message,
-		Response:  reply,
+		Message:  request.Message,
+		Response: reply,
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Message sent successfully",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessSendMessageChatbot, response)
 }

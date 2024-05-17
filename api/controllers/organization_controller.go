@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -11,6 +10,7 @@ import (
 	"redoocehub/domains/dto"
 	"redoocehub/domains/entities"
 	"redoocehub/domains/infra"
+	"redoocehub/internal/constant"
 	"redoocehub/internal/validation"
 	"redoocehub/usecases"
 )
@@ -28,184 +28,98 @@ func (oc *OrganizationController) GetAll(c echo.Context) error {
 	organizations, err := oc.OrganizationUsecase.GetAll()
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetAllOrganization, err.Error())
 	}
 
 	response := entities.ToGetAllResponseOrganizations(organizations)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success retrieved all organizations",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetAllOrganization, response)
 }
 
 func (oc *OrganizationController) GetByID(c echo.Context) error {
-
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	organization, err := oc.OrganizationUsecase.GetByID(id)
+	organization, err := oc.OrganizationUsecase.GetByID(uuid.MustParse(c.Param("id")))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrGetAllOrganization, err.Error())
 	}
 
 	response := entities.ToResponseOrganizationDetail(&organization, &organization.User)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success retrieved organization",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetOrganization, response)
 }
 
 func (oc *OrganizationController) Create(c echo.Context) error {
-
 	var request dto.OrganizationRequest
 
 	formHeader, errFile := c.FormFile("profile_image")
 
 	if errFile != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    errFile.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrFailedGetFile, errFile.Error())
 	}
 
 	formFile, errFile := formHeader.Open()
 
 	if errFile != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    errFile.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrFailedOpenFile, errFile.Error())
 	}
 
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	request.ProfileImage = formFile
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrValidation, constant.ErrBinding, err)
 	}
 
-	userId := c.Get("x-user-id").(string)
-
-	request.UserID = uuid.MustParse(userId)
+	request.UserID = uuid.MustParse(c.Get("x-user-id").(string))
 
 	uploadUrl, err := usecases.NewMediaUpload().FileUpload(dto.File{File: formFile}, entities.CloudinaryEnvSetting{
-		CloudName: oc.Env.CLOUDINARY_CLOUD_NAME,
-		ApiKey:    oc.Env.CLOUDINARY_API_KEY,
-		ApiSecret: oc.Env.CLOUDINARY_API_SECRET,
+		CloudName:    oc.Env.CLOUDINARY_CLOUD_NAME,
+		ApiKey:       oc.Env.CLOUDINARY_API_KEY,
+		ApiSecret:    oc.Env.CLOUDINARY_API_SECRET,
 		UploadFolder: oc.Env.CLOUDINARY_UPLOAD_FOLDER,
 	})
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrFailedUploadFile, err.Error())
 	}
-
-	fmt.Println("uploadUrl: ", uploadUrl)
 
 	request.ProfileImage = uploadUrl
 
 	organization, err := oc.OrganizationUsecase.Create(&request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrCreateOrganization, err.Error())
 	}
 
 	userData, err := oc.OrganizationUsecase.GetUser(organization.UserID)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetUser, err.Error())
 	}
 
 	response := entities.ToResponseOrganizationDetail(organization, &userData)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success created organization",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusCreated, constant.SuccessCreated, constant.SuccessCreateOrganization, response)
 }
 
 func (oc *OrganizationController) Update(c echo.Context) error {
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	orgExist, err := oc.OrganizationUsecase.GetByID(id)
+	orgExist, err := oc.OrganizationUsecase.GetByID(uuid.MustParse(c.Param("id")))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
-	}
-
-	if orgExist.ID == uuid.Nil {
-		return c.JSON(http.StatusNotFound, infra.ErrorResponse{
-			StatusCode: "Not Found",
-			Message:    "Organization not found",
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrGetOrganization, err.Error())
 	}
 
 	var request dto.OrganizationRequest
 
-	err = c.Bind(&request)
-
-	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    "make sure you follow the input requirements",
-			Data:       err,
-		})
+	if err = c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: "Bad Request",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := validation.ValidateRequest(request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
 	orgExist.Name = request.Name
@@ -215,65 +129,31 @@ func (oc *OrganizationController) Update(c echo.Context) error {
 	orgExist.Website = request.Website
 	orgExist.Phone = request.Phone
 
-	err = oc.OrganizationUsecase.Update(&orgExist)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err = oc.OrganizationUsecase.Update(&orgExist); err != nil {
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrUpdateOrganization, err.Error())
 	}
 
 	response := entities.ToResponseOrganization(&orgExist)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success updated organization",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessUpdateOrganization, response)
 }
 
 func (oc *OrganizationController) Delete(c echo.Context) error {
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	err := oc.OrganizationUsecase.Delete(id)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := oc.OrganizationUsecase.Delete(uuid.MustParse(c.Param("id"))); err != nil {
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrDeleteOrganization, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success deleted organization",
-		Data:       nil,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessDeleteOrganization, nil)
 }
 
 func (oc *OrganizationController) GetAllByUserId(c echo.Context) error {
-	userId := c.Get("x-user-id").(string)
-
-	organizations, err := oc.OrganizationUsecase.GetAllByUserId(uuid.MustParse(userId))
+	organizations, err := oc.OrganizationUsecase.GetAllByUserId(uuid.MustParse(c.Get("x-user-id").(string)))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: "Internal Server Error",
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetOrganizationByUserId, err.Error())
 	}
 
 	response := entities.ToGetAllResponseOrganizations(organizations)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: "OK",
-		Message:    "Success get all organizations",
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetOrganizationByUserId, response)
 }

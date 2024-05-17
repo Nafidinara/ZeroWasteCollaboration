@@ -17,6 +17,7 @@ import (
 
 type AddressController struct {
 	AddressUsecase entities.AddressUsecase
+	OrganizationUsecase entities.OrganizationUsecase
 	Env            *bootstrap.Env
 }
 
@@ -28,76 +29,48 @@ func (ac *AddressController) CreateUserAddress(c echo.Context) error {
 	var request dto.UserAddressRequest
 
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrValidation,
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
-	userId := c.Get("x-user-id").(string)
-
-	request.UserId = uuid.MustParse(userId)
+	request.UserId = uuid.MustParse(c.Get("x-user-id").(string))
 
 	newAddress, err := ac.AddressUsecase.CreateUserAddress(&request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrCreateUserAddress,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrCreateUserAddress, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessCreated,
-		Message:    constant.SuccessCreateAddress,
-		Data:       newAddress,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessCreateAddress, newAddress)
 }
 
 func (ac *AddressController) CreateOrganizationAddress(c echo.Context) error {
 	var request dto.OrganizationAddressRequest
 
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrValidation,
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
+	}
+
+	organization, err := ac.OrganizationUsecase.GetByID(request.OrganizationId)
+
+	if err != nil || organization.ID == uuid.Nil {
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrGetOrganization, err.Error())
 	}
 
 	newAddress, err := ac.AddressUsecase.CreateOrganizationAddress(&request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrCreateOrganizationAddress,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrCreateOrganizationAddress, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessCreated,
-		Message:    constant.SuccessCreateAddress,
-		Data:       newAddress,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessCreateAddress, newAddress)
 }
 
 func (ac *AddressController) GetAllAddress(c echo.Context) error {
@@ -108,55 +81,26 @@ func (ac *AddressController) GetAllAddress(c echo.Context) error {
 	var address []entities.Address
 	var err error
 
-	fmt.Println(organizationId, userId)
-
 	if organizationId != "" {
 		address, err = ac.AddressUsecase.GetAllOrganizationAddress(uuid.MustParse(organizationId))
 	} else if userId != "" {
 		address, err = ac.AddressUsecase.GetAllUserAddress(uuid.MustParse(userId))
 	} else {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrParameterNotFound,
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrParameterNotFound, fmt.Sprintf("organization_id: %s, user_id: %s", organizationId, userId))
 	}
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetAllAddress, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.ErrInternalServer,
-		Data:       address,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetAllAddress, address)
 }
 
 // delete
 func (ac *AddressController) Delete(c echo.Context) error {
-
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	err := ac.AddressUsecase.Delete(id)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrDeleteAddress,
-			Data:       nil,
-		})
+	if err := ac.AddressUsecase.Delete(uuid.MustParse(c.Param("id"))); err != nil {
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrDeleteAddress, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.SuccessDeleteAddress,
-		Data:       nil,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessDeleteAddress, nil)
 }

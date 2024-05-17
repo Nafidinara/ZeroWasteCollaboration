@@ -35,6 +35,12 @@ func (o *organizationRepository) GetByID(id uuid.UUID) (entities.Organization, e
 	var organization entities.Organization
 	err := o.DB.Where("id = ?", id).Preload("User").
 		First(&organization).Error
+
+	if err != nil {
+		return organization, err
+	}
+
+	err = o.DB.Table("addresses").Where("organization_id = ?", id).Find(&organization.Addresses).Error
 	return organization, err
 }
 

@@ -1,11 +1,11 @@
 # Redooce Hub
 
 ## About Project
+![RedooceHub Cover](assets/readme/cover.png)
 Redooce Hub, sebuah aplikasi yang digunakan sebagai wadah organisasi, lembaga, atau individu untuk berkolaborasi dalam berbagai kegiatan yang berfokus pada penanganan masalah sampah atau zero waste.
 
 ## Features
 Hanya terdapat satu role yaitu user:
-
 ### Autentikasi
 - Register
 - Login
@@ -35,7 +35,7 @@ Aplikasi dibangun menggunakan clean architecture dan beberapa stack seperti:
 
 ## Documents
 ### API Docs
-lorem ipsum
+https://documenter.getpostman.com/view/9643281/2sA3JT1xQ1 
 ### ERD
 ![RedooceHub ERD](assets/readme/erd.png)
 ### HLA

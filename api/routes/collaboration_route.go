@@ -15,12 +15,13 @@ import (
 
 func NewCollaborationRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *echo.Group) {
 	cr := repositories.NewCollaborationRepository(db)
-
 	pr := repositories.NewProposalRepository(db)
+	or := repositories.NewOrganizationRepository(db)
 
 	cc := &controllers.CollaborationController{
 		CollaborationUsecase: usecases.NewCollaborationUsecase(cr, timeout),
 		ProposalUsecase:      usecases.NewProposalUsecase(pr, timeout),
+		OrganizationUsecase:  usecases.NewOrganizationUsecase(or, timeout),
 		Env:                  env,
 	}
 

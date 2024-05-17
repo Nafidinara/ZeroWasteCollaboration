@@ -20,6 +20,7 @@ type CollaborationController struct {
 	CollaborationUsecase entities.CollaborationUsecase
 	ProposalUsecase      entities.ProposalUsecase
 	CloudinaryUsecase    entities.CloudinaryUsecase
+	OrganizationUsecase  entities.OrganizationUsecase
 	Env                  *bootstrap.Env
 }
 
@@ -27,88 +28,63 @@ func NewCollaborationController(
 	collaborationUsecase entities.CollaborationUsecase,
 	proposalUsecase entities.ProposalUsecase,
 	cloudinaryUsecase entities.CloudinaryUsecase,
+	organizationUsecase entities.OrganizationUsecase,
 	env *bootstrap.Env,
 ) *CollaborationController {
 	return &CollaborationController{
 		CollaborationUsecase: collaborationUsecase,
 		ProposalUsecase:      proposalUsecase,
 		CloudinaryUsecase:    cloudinaryUsecase,
+		OrganizationUsecase:  organizationUsecase,
 		Env:                  env,
 	}
 }
 
 // get by id
 func (cc *CollaborationController) GetByID(c echo.Context) error {
-	idParam := c.Param("id")
-
-	id := uuid.MustParse(idParam)
-
-	collaboration, err := cc.CollaborationUsecase.GetByID(id)
+	collaboration, err := cc.CollaborationUsecase.GetByID(uuid.MustParse(c.Param("id")))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrNotFoundCollaboration,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrGetCollaboration, err.Error())
 	}
 
 	response := entities.ToResponseCollaboration(&collaboration)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.SuccessGetCollaboration,
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetCollaboration, response)
 }
 
 // create
 func (cc *CollaborationController) Create(c echo.Context) error {
-
-	var request dto.CollaborationRequest
-
 	formHeader, errFile := c.FormFile("attachment")
 
 	if errFile != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrFailedGetFile,
-			Data:       errFile.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrFailedGetFile, errFile.Error())
 	}
 
 	formFile, errFile := formHeader.Open()
 
 	if errFile != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrFailedOpenFile,
-			Data:       errFile.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrFailedOpenFile, errFile.Error())
 	}
 
-	err := c.Bind(&request)
+	var request dto.CollaborationRequest
 
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
-	userId := c.Get("x-user-id").(string)
-
-	request.UserId = uuid.MustParse(userId)
+	request.UserId = uuid.MustParse(c.Get("x-user-id").(string))
 
 	request.Attachment = formFile
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrValidation,
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
+	}
+
+	organization , err := cc.OrganizationUsecase.GetByID(request.OrganizationId)
+
+	if err != nil || organization.ID == uuid.Nil {
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrGetOrganization, err.Error())
 	}
 
 	uploadUrl, err := usecases.NewMediaUpload().FileUpload(dto.File{File: formFile}, entities.CloudinaryEnvSetting{
@@ -119,11 +95,7 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 	})
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrUploadFile,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrFailedUploadFile, err.Error())
 	}
 
 	proposalReq := dto.ProposalRequest{
@@ -135,11 +107,7 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 	proposal, err := cc.ProposalUsecase.Create(&proposalReq)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrFailedProposal,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrCreateProposal, err.Error())
 	}
 
 	request.ProposalId = proposal.ID
@@ -147,21 +115,13 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 	collaboration, err := cc.CollaborationUsecase.Create(&request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrCreateCollaboration,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrCreateCollaboration, err.Error())
 	}
 
 	newCollaboration, err := cc.CollaborationUsecase.GetByID(collaboration.ID)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrNotFoundCollaboration,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetCollaboration, err.Error())
 	}
 
 	response := entities.ToResponseCollaboration(&newCollaboration)
@@ -174,111 +134,74 @@ func (cc *CollaborationController) Create(c echo.Context) error {
 		ProposalAttachment: response.Proposal.Attachment,
 	}
 
-	err = email.NewEmailService().SendEmail(emailReq)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrFailedSendEmail,
-			Data:       err.Error(),
-		})
+	emailConfig := entities.EmailConfig{
+		SMTPUsername: cc.Env.SMTP_USERNAME,
+		SMTPPassword: cc.Env.SMTP_PASSWORD,
+		SMTPServer:   cc.Env.SMTP_SERVER,
+		SMTPPort:     cc.Env.SMTP_PORT,
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.SuccessCreateCollaboration,
-		Data:       response,
-	})
+	err = email.SendEmail(emailConfig, emailReq)
+
+	if err != nil {
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrSendEmail, err.Error())
+	}
+
+	return infra.NewSuccessResponse(c, http.StatusCreated, constant.SuccessCreated, constant.SuccessCreateCollaboration, response)
 }
 
 // update
 func (cc *CollaborationController) Update(c echo.Context) error {
 	var request dto.CollaborationUpdateStatusRequest
 
-	err := c.Bind(&request)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	if err := c.Bind(&request); err != nil {
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrBinding, err.Error())
 	}
 
 	if err := validation.ValidateRequest(request); err != nil {
-		return c.JSON(http.StatusBadRequest, infra.ErrorResponse{
-			StatusCode: constant.ErrBadRequest,
-			Message:    constant.ErrParameterNotFound,
-			Data:       err,
-		})
+		return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrValidation, err)
 	}
 
-	idParam := c.Param("id")
-	id := uuid.MustParse(idParam)
-
-	userId := c.Get("x-user-id").(string)
-
-	collaboration, err := cc.CollaborationUsecase.Update(id, uuid.MustParse(userId), &request)
+	collaboration, err := cc.CollaborationUsecase.Update(uuid.MustParse(c.Param("id")), uuid.MustParse(c.Get("x-user-id").(string)), &request)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrUpdateCollaboration, err.Error())
 	}
 
 	response := entities.ToResponseCollaboration(collaboration)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.SuccessUpdateCollaboration,
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessUpdateCollaboration, response)
 }
 
 // get all by user
 func (cc *CollaborationController) GetAllByUserId(c echo.Context) error {
-	userId := c.Get("x-user-id").(string)
-
-	collaborations, err := cc.CollaborationUsecase.GetAllByUserId(uuid.MustParse(userId))
+	collaborations, err := cc.CollaborationUsecase.GetAllByUserId(uuid.MustParse(c.Get("x-user-id").(string)))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrNotFoundCollaboration,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrGetAllCollaboration, err.Error())
 	}
 
 	response := entities.ToResponseCollaborations(collaborations)
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.SuccessGetAllCollaboration,
-		Data:       response,
-	})
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessGetAllCollaboration, response)
 }
 
 // delete
 func (cc *CollaborationController) Delete(c echo.Context) error {
-	idParam := c.Param("id")
 
-	id := uuid.MustParse(idParam)
-
-	err := cc.CollaborationUsecase.Delete(id)
+	existOrganization, err := cc.CollaborationUsecase.GetByID(uuid.MustParse(c.Param("id")))
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, infra.ErrorResponse{
-			StatusCode: constant.ErrInternalServer,
-			Message:    constant.ErrFailedDeleteCollaboration,
-			Data:       err.Error(),
-		})
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrGetCollaboration, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, infra.SuccessResponse{
-		StatusCode: constant.SuccessOk,
-		Message:    constant.SuccessDeleteCollaboration,
-		Data:       nil,
-	})
+	if err := cc.CollaborationUsecase.Delete(uuid.MustParse(c.Param("id"))); err != nil {
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrDeleteCollaboration, err.Error())
+	}
+
+	if err := cc.ProposalUsecase.Delete(existOrganization.ProposalId); err != nil {
+		return infra.NewErrorResponse(c, http.StatusNotFound, constant.ErrNotFound, constant.ErrDeleteProposal, err.Error())
+	}
+
+	return infra.NewSuccessResponse(c, http.StatusOK, constant.SuccessOk, constant.SuccessDeleteCollaboration, nil)
 }

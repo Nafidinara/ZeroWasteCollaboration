@@ -17,8 +17,9 @@ func NewAddressRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e 
 	ar := repositories.NewAddressRepository(db)
 
 	ac := &controllers.AddressController{
-		AddressUsecase: usecases.NewAddressUsecase(ar, timeout),
-		Env:            env,
+		AddressUsecase:      usecases.NewAddressUsecase(ar, timeout),
+		OrganizationUsecase: usecases.NewOrganizationUsecase(repositories.NewOrganizationRepository(db), timeout),
+		Env:                 env,
 	}
 
 	e.GET("/addresses", ac.GetAllAddress)
@@ -26,7 +27,7 @@ func NewAddressRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e 
 	protectedRouter := e.Group("")
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.ACCESS_TOKEN_SECRET))
 
-	protectedRouter.POST("/user-addresses", ac.CreateUserAddress)
-	protectedRouter.POST("/organization-addresses", ac.CreateOrganizationAddress)
+	protectedRouter.POST("/users/address", ac.CreateUserAddress)
+	protectedRouter.POST("/organizations/address", ac.CreateOrganizationAddress)
 	protectedRouter.DELETE("/addresses/:id", ac.Delete)
 }

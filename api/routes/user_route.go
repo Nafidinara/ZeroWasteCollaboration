@@ -17,16 +17,18 @@ func NewUserRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, e *ec
 	ur := repositories.NewUserRepository(db)
 
 	uc := &controllers.UserController{
-		UserUsecase: usecases.NewUserUsecase(ur, timeout),
+		UserUsecase:    usecases.NewUserUsecase(ur, timeout),
 		ChatbotUsecase: usecases.NewChatbotUsecase(timeout),
-		Env:         env,
+		Env:            env,
 	}
 
-	e.POST("/login", uc.Login)
-	e.POST("/register", uc.Register)
-	e.POST("/refresh", uc.RefreshToken)
+	userRouter := e.Group("/users")
 
-	protectedRouter := e.Group("")
+	userRouter.POST("/login", uc.Login)
+	userRouter.POST("/register", uc.Register)
+	userRouter.POST("/refresh", uc.RefreshToken)
+
+	protectedRouter := userRouter.Group("")
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.ACCESS_TOKEN_SECRET))
 	protectedRouter.GET("/profile", uc.Profile)
 	protectedRouter.PUT("/profile", uc.Update)

@@ -5,23 +5,9 @@ import (
 	"log"
 	"net/smtp"
 
-	"redoocehub/bootstrap"
 	"redoocehub/domains/dto"
+	"redoocehub/domains/entities"
 )
-
-type EmailService struct {
-	Env *bootstrap.Env
-}
-
-type EmailServiceInterface interface {
-	SendEmail(requestEmail dto.EmailRequest) error
-}
-
-func NewEmailService() EmailServiceInterface {
-	return &EmailService{
-		Env: bootstrap.NewEnv(),
-	}
-}
 
 func buildMessage(from string, requestEmail dto.EmailRequest) string {
 	message := fmt.Sprintf("From: %s\r\n", from)
@@ -37,13 +23,13 @@ func buildMessage(from string, requestEmail dto.EmailRequest) string {
 	return message
 }
 
-func (es *EmailService) SendEmail(requestEmail dto.EmailRequest) (err error) {
+func SendEmail(config entities.EmailConfig, requestEmail dto.EmailRequest) (err error) {
 
-	auth := smtp.PlainAuth("", es.Env.SMTP_USERNAME, es.Env.SMTP_PASSWORD, es.Env.SMTP_SERVER)
+	auth := smtp.PlainAuth("", config.SMTPUsername, config.SMTPPassword, config.SMTPServer)
 
-	msg := buildMessage(es.Env.SMTP_USERNAME, requestEmail)
+	msg := buildMessage(config.SMTPUsername, requestEmail)
 
-	err = smtp.SendMail(es.Env.SMTP_SERVER+":"+es.Env.SMTP_PORT, auth, es.Env.SMTP_USERNAME, []string{requestEmail.OrganizationEmail}, []byte(msg))
+	err = smtp.SendMail(config.SMTPServer+":"+config.SMTPPort, auth, config.SMTPUsername, []string{requestEmail.OrganizationEmail}, []byte(msg))
 
 	if err != nil {
 		log.Println("error send email: ", err)

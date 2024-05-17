@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"redoocehub/domains/infra"
+	"redoocehub/internal/constant"
 	"redoocehub/internal/tokenutil"
 )
 
@@ -21,26 +22,14 @@ func JwtAuthMiddleware(secret string) echo.MiddlewareFunc {
 				if authorized {
 					userID, err := tokenutil.ExtractIDFromToken(authToken, secret)
 					if err != nil {
-						return c.JSON(http.StatusUnauthorized, infra.ErrorResponse{
-							StatusCode: "Unauthorized",
-							Message:    err.Error(),
-							Data:       nil,
-						})
+						return infra.NewErrorResponse(c, http.StatusInternalServerError, constant.ErrInternalServer, constant.ErrFailedExtractToken, err.Error())
 					}
 					c.Set("x-user-id", userID)
 					return next(c)
 				}
-				return c.JSON(http.StatusUnauthorized, infra.ErrorResponse{
-					StatusCode: "Unauthorized",
-					Message:    err.Error(),
-					Data:       nil,
-				})
+				return infra.NewErrorResponse(c, http.StatusUnauthorized, constant.ErrUnauthorized, constant.ErrUnauthorized, err.Error())
 			}
-			return c.JSON(http.StatusUnauthorized, infra.ErrorResponse{
-				StatusCode: "Unauthorized",
-				Message:    "You are not authorized to access this resource",
-				Data:       nil,
-			})
+			return infra.NewErrorResponse(c, http.StatusBadRequest, constant.ErrBadRequest, constant.ErrUnauthorizedAuth, nil)
 		}
 	}
 }
